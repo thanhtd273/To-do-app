@@ -1,7 +1,8 @@
-import {Input} from '@rneui/themed';
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {TextInput} from 'react-native';
+import SubjectBar from './SubjectBar';
+
 import IconButton from './UI/IconButton';
 import SubjectItem from './UI/SubjectItem';
 
@@ -16,9 +17,7 @@ const Header = () => {
         />
         <IconButton icon="calendar-today" size={48} color="white" />
       </View>
-      <View>
-        <SubjectItem />
-      </View>
+      <SubjectBar />
     </View>
   );
 };

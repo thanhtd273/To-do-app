@@ -1,10 +1,17 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import {TEMPLATE} from '../utils/data';
+import TaskContentItem from './UI/TaskContentItem';
 
 const Content = () => {
   return (
     <View style={styles.container}>
-      <Text>Content</Text>
+      <TaskContentItem
+        title="Continue To-do-app"
+        deadline="12.30"
+        subjectIcon="sports-football"
+        subjectIconColor="#6e83de"
+      />
     </View>
   );
 };

@@ -2,12 +2,12 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {Icon} from '@rneui/themed';
 
-const SubjectItem = () => {
+const SubjectItem = ({icon, color, subject, style}) => {
   return (
-    <Pressable>
-      <View style={styles.subject}>
-        <Icon name="monitor" size={20} color="#fcaa46" />
-        <Text style={styles.text}>Study</Text>
+    <Pressable style={styles.container}>
+      <View style={[styles.subject, style]}>
+        {icon && <Icon name={icon} size={20} color={color} />}
+        <Text style={styles.text}>{subject}</Text>
       </View>
     </Pressable>
   );
@@ -16,17 +16,25 @@ const SubjectItem = () => {
 export default SubjectItem;
 
 const styles = StyleSheet.create({
-  subject: {
-    width: 64,
+  container: {
     height: 48,
-    borderRadius: 4,
-    backgroundColor: '#545bff',
+    width: 72,
+    marginRight: 8,
+  },
+  subject: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 6,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     flexDirection: 'row',
   },
   text: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: '700',
+  },
+  pressed: {
+    opacity: 0.75,
   },
 });
