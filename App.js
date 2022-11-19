@@ -6,6 +6,8 @@ import {Icon} from '@rneui/themed';
 
 import TasksOverviewScreen from './src/screens/TasksOverviewScreen';
 import TaskEditionScreen from './src/screens/TaskEditionScreen';
+import {store} from './src/components/redux/store';
+import {Provider} from 'react-redux';
 
 const BottomTabs = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -38,24 +40,26 @@ const TasksOverview = () => {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {backgroundColor: '#070717'},
-          headerTintColor: '#48497b',
-          headerTitleAlign: 'center',
-          contentStyle: {backgroundColor: '#070717'},
-        }}>
-        <Stack.Screen
-          name="Overview"
-          component={TasksOverviewScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="EditTask" component={TaskEditionScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: {backgroundColor: '#070717'},
+            headerTintColor: '#48497b',
+            headerTitleAlign: 'center',
+            contentStyle: {backgroundColor: '#070717'},
+          }}>
+          <Stack.Screen
+            name="Overview"
+            component={TasksOverviewScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name="EditTask" component={TaskEditionScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 

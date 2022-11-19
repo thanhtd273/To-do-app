@@ -26,7 +26,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.2,
+    flex: 0.3,
   },
   topStyle: {
     flexDirection: 'row',

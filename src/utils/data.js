@@ -7,17 +7,52 @@ const TEMPLATE = [
     tasks: [
       {
         title: 'Continue to-do-list',
-        deadline: '11:10, 19/10/2022',
+        deadline: new Date('2022-10-19T05:10'),
+        isCompleted: false,
+      },
+      {
+        title: 'Continue to-do-list',
+        deadline: new Date('2022-10-19T05:10'),
+        isCompleted: false,
+      },
+      {
+        title: 'Continue to-do-list',
+        deadline: new Date('2022-10-19T05:10'),
         isCompleted: false,
       },
       {
         title: 'Connect database to app',
-        deadline: '23:00:00, 20/10/2022',
+        deadline: new Date('2022-10-20T23:00'),
         isCompleted: false,
       },
       {
         title: 'Implement authentication to login user',
-        deadline: '21:30:00, 30/10/2022',
+        deadline: new Date('2022-12-15T22:00'),
+      },
+      {
+        title: 'Complete analog circuit project',
+        deadline: new Date('2022-11-20T23:59'),
+        isCompleted: false,
+      },
+      {
+        title: 'Complete analog circuit project',
+        deadline: new Date('2022-11-20T23:59'),
+        isCompleted: false,
+      },
+      {
+        title: 'Do general economic exercise',
+        deadline: new Date('2022-10-30T05:30'),
+        isCompleted: false,
+      },
+      {
+        title: 'Finish physic exercise',
+        deadline: new Date('2022-11-19T12:00'),
+        isCompleted: false,
+      },
+      {
+        title: 'Summit speaking test',
+        deadline: new Date('2022-11-12T21:30'),
+        isCompleted: false,
       },
     ],
   },
