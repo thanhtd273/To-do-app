@@ -7,36 +7,81 @@ const Content = ({data}) => {
   const calculateDateLeft = (date1, date2) =>
     Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
   const sortedData = [
-    {
-      icon: '',
-      iconColor: '',
-      left: 0,
-      tasks: [],
-    },
+    // {
+    //   icon: '',
+    //   iconColor: '',
+    //   left: 0,
+    //   tasks: [],
+    // },
   ];
-
-  data.tasks.forEach(task => {
-    const dateLeft = calculateDateLeft(new Date(), task.deadline);
-    const haveSameDateLeft = sortedData.find(item => item.left === dateLeft);
-    if (haveSameDateLeft || haveSameDateLeft === 0)
-      haveSameDateLeft.tasks.push({
-        title: task.title,
-        isCompleted: task.isCompleted,
-      });
-    else {
-      sortedData.push({
-        left: dateLeft,
-        deadline: task.deadline,
-        tasks: [{title: task.title, isCompleted: task.isCompleted}],
+  if (Array.isArray(data)) {
+    for (let item of data) {
+      item.tasks.forEach(task => {
+        const dateLeft = calculateDateLeft(new Date(), task.deadline);
+        const haveSameDateLeft = sortedData.find(
+          element => element.left === dateLeft,
+        );
+        if (haveSameDateLeft || haveSameDateLeft === 0) {
+          haveSameDateLeft.tasks.push({
+            title: task.title,
+            isCompleted: task.isCompleted,
+            icon: item.icon,
+            iconColor: item.iconColor,
+            // deadline: task.deadline,
+          });
+        } else {
+          sortedData.push({
+            left: dateLeft,
+            deadline: task.deadline,
+            tasks: [
+              {
+                // deadline: task.deadline,
+                iconColor: item.iconColor,
+                icon: item.icon,
+                title: task.title,
+                isCompleted: task.isCompleted,
+              },
+            ],
+          });
+        }
       });
     }
-  });
+  } else {
+    data.tasks.forEach(task => {
+      const dateLeft = calculateDateLeft(new Date(), task.deadline);
+      const haveSameDateLeft = sortedData.find(item => item.left === dateLeft);
+      if (haveSameDateLeft || haveSameDateLeft === 0)
+        haveSameDateLeft.tasks.push({
+          title: task.title,
+          isCompleted: task.isCompleted,
+          icon: data.icon,
+          iconColor: data.iconColor,
+          // deadline: task.deadline,
+        });
+      else {
+        sortedData.push({
+          left: dateLeft,
+          deadline: task.deadline,
+          tasks: [
+            {
+              // deadline: task.deadline,
+              icon: data.icon,
+              iconColor: data.iconColor,
+              title: task.title,
+              isCompleted: task.isCompleted,
+            },
+          ],
+        });
+      }
+    });
+  }
   for (let i = 0; i < sortedData.length - 1; i++) {
     for (let j = i + 1; j < sortedData.length; j++) {
       if (sortedData[j - 1].left > sortedData[j].left)
         [sortedData[j - 1], sortedData[j]] = [sortedData[j], sortedData[j - 1]];
     }
   }
+
   const formateDate = (date, left) => {
     const formated = date?.toLocaleDateString('en-US', {
       // weekday: 'long',
@@ -66,9 +111,9 @@ const Content = ({data}) => {
                 key={index}
                 title={task.title}
                 deadline={item.deadline}
-                subject={data.subject}
-                subjectIcon={data.icon}
-                subjectIconColor={data.iconColor}
+                subject={item.subject}
+                subjectIcon={task.icon}
+                subjectIconColor={task.iconColor}
               />
             ))}
           </View>

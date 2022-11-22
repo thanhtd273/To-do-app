@@ -9,15 +9,16 @@ import {DATA, TEMPLATE} from '../utils/data';
 
 const TasksOverviewScreen = () => {
   const subjectState = useSelector(state => state.subject);
-  const data = DATA.find(
+  let data = DATA.find(
     item =>
       item.subject === subjectState || item.subject === subjectState.subject,
   );
-  // console.log(data);
+  if (typeof data === 'undefined') data = DATA;
+  console.log(data);
   return (
     <View style={styles.container}>
       <Header />
-      <Content data={TEMPLATE[0]} />
+      <Content data={data} />
       <Footer />
     </View>
   );
