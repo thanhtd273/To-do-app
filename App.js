@@ -8,6 +8,7 @@ import {Provider} from 'react-redux';
 import TasksOverviewScreen from './src/screens/TasksOverviewScreen';
 import TaskEditionScreen from './src/screens/TaskEditionScreen';
 import {store} from './src/components/redux/store';
+import CreateNewTaskScreen from './src/screens/CreateNewTaskScreen';
 
 const BottomTabs = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -57,6 +58,13 @@ const App = () => {
             }}
           />
           <Stack.Screen name="EditTask" component={TaskEditionScreen} />
+          <Stack.Screen
+            name="NewTask"
+            component={CreateNewTaskScreen}
+            options={{
+              title: 'New task',
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

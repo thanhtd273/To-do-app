@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {CheckBox, Icon} from '@rneui/themed';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
@@ -8,14 +9,18 @@ const TaskContentItem = ({
   subjectIcon,
   subjectIconColor,
   subject,
+  onPress,
 }) => {
   const [check, setCheck] = useState(deadline < new Date());
   const formatTime = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
   }).format(deadline);
+
   return (
-    <Pressable style={({pressed}) => pressed && styles.pressed}>
+    <Pressable
+      style={({pressed}) => pressed && styles.pressed}
+      onPress={onPress}>
       <View style={styles.container}>
         <CheckBox
           checked={check}

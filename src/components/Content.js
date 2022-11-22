@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Colors from '../utils/Colors';
@@ -6,14 +7,7 @@ import TaskContentItem from './UI/TaskContentItem';
 const Content = ({data}) => {
   const calculateDateLeft = (date1, date2) =>
     Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
-  const sortedData = [
-    // {
-    //   icon: '',
-    //   iconColor: '',
-    //   left: 0,
-    //   tasks: [],
-    // },
-  ];
+  const sortedData = [];
   if (Array.isArray(data)) {
     for (let item of data) {
       item.tasks.forEach(task => {
@@ -27,7 +21,7 @@ const Content = ({data}) => {
             isCompleted: task.isCompleted,
             icon: item.icon,
             iconColor: item.iconColor,
-            // deadline: task.deadline,
+            deadline: task.deadline,
           });
         } else {
           sortedData.push({
@@ -35,7 +29,7 @@ const Content = ({data}) => {
             deadline: task.deadline,
             tasks: [
               {
-                // deadline: task.deadline,
+                deadline: task.deadline,
                 iconColor: item.iconColor,
                 icon: item.icon,
                 title: task.title,
@@ -56,7 +50,7 @@ const Content = ({data}) => {
           isCompleted: task.isCompleted,
           icon: data.icon,
           iconColor: data.iconColor,
-          // deadline: task.deadline,
+          deadline: task.deadline,
         });
       else {
         sortedData.push({
@@ -64,7 +58,7 @@ const Content = ({data}) => {
           deadline: task.deadline,
           tasks: [
             {
-              // deadline: task.deadline,
+              deadline: task.deadline,
               icon: data.icon,
               iconColor: data.iconColor,
               title: task.title,
@@ -93,7 +87,11 @@ const Content = ({data}) => {
     else if (left === 1) return `Tommorow, ${formated}`;
     return formated;
   };
-  console.log(sortedData);
+
+  const navigation = useNavigation();
+  const handlePressTag = () => {
+    navigation.navigate('EditTask');
+  };
   return (
     <ScrollView style={styles.container}>
       {sortedData.map((item, index) => (
@@ -110,10 +108,11 @@ const Content = ({data}) => {
               <TaskContentItem
                 key={index}
                 title={task.title}
-                deadline={item.deadline}
+                deadline={task.deadline}
                 subject={item.subject}
                 subjectIcon={task.icon}
                 subjectIconColor={task.iconColor}
+                onPress={handlePressTag}
               />
             ))}
           </View>
@@ -127,7 +126,7 @@ export default Content;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.6,
+    flex: 0.5,
     backgroundColor: Colors.theme,
   },
   dateContainer: {

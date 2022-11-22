@@ -14,7 +14,7 @@ const TasksOverviewScreen = () => {
       item.subject === subjectState || item.subject === subjectState.subject,
   );
   if (typeof data === 'undefined') data = DATA;
-  console.log(data);
+  // console.log(data);
   return (
     <View style={styles.container}>
       <Header />

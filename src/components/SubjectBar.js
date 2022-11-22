@@ -6,19 +6,21 @@ import Colors from '../utils/Colors';
 import {TEMPLATE} from '../utils/data';
 import SubjectItem from './UI/SubjectItem';
 
-const SubjectBar = () => {
+const SubjectBar = ({isContainedAll}) => {
   const subjectState = useSelector(state => state.subject);
 
   return (
     <ScrollView contentContainerStyle={styles.container} horizontal={true}>
-      <SubjectItem
-        subject="All"
-        style={
-          (subjectState === 'All' || subjectState.subject === 'All') && {
-            backgroundColor: Colors.bluePurple,
+      {isContainedAll && (
+        <SubjectItem
+          subject="All"
+          style={
+            (subjectState === 'All' || subjectState.subject === 'All') && {
+              backgroundColor: Colors.bluePurple,
+            }
           }
-        }
-      />
+        />
+      )}
       {TEMPLATE.map(item => (
         <SubjectItem
           key={item.id}

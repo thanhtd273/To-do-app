@@ -1,6 +1,7 @@
 import React from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {TextInput} from 'react-native';
+import Colors from '../utils/Colors';
 import SubjectBar from './SubjectBar';
 
 import IconButton from './UI/IconButton';
@@ -15,9 +16,14 @@ const Header = () => {
           placeholder="Search"
           placeholderTextColor="#48497b"
         />
-        <IconButton icon="calendar-today" size={48} color="white" />
+        <IconButton
+          icon="calendar-today"
+          size={48}
+          color="white"
+          style={styles.pressedCalendar}
+        />
       </View>
-      <SubjectBar />
+      <SubjectBar isContainedAll={true} />
     </View>
   );
 };
@@ -40,5 +46,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#121230',
     borderRadius: 12,
     paddingLeft: 12,
+  },
+  pressedCalendar: {
+    backgroundColor: Colors.bluePurple,
   },
 });
