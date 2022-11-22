@@ -3,11 +3,11 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from '@rneui/themed';
+import {Provider} from 'react-redux';
 
 import TasksOverviewScreen from './src/screens/TasksOverviewScreen';
 import TaskEditionScreen from './src/screens/TaskEditionScreen';
 import {store} from './src/components/redux/store';
-import {Provider} from 'react-redux';
 
 const BottomTabs = createBottomTabNavigator();
 const Stack = createStackNavigator();

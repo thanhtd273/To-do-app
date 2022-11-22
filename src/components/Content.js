@@ -8,10 +8,13 @@ const Content = ({data}) => {
     Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
   const sortedData = [
     {
+      icon: '',
+      iconColor: '',
       left: 0,
       tasks: [],
     },
   ];
+
   data.tasks.forEach(task => {
     const dateLeft = calculateDateLeft(new Date(), task.deadline);
     const haveSameDateLeft = sortedData.find(item => item.left === dateLeft);
@@ -41,19 +44,21 @@ const Content = ({data}) => {
       month: 'long',
       day: 'numeric',
     });
-    if (left === 0) return `Today, ${formated}`;
-    else if (left == 1) return `Tommorow, ${formated}`;
+    if (left === 0) return formated && `Today, ${formated}`;
+    else if (left === 1) return `Tommorow, ${formated}`;
     return formated;
   };
-  formateDate(sortedData[0].deadline);
+  console.log(sortedData);
   return (
     <ScrollView style={styles.container}>
       {sortedData.map((item, index) => (
         <View key={index}>
           <View style={styles.dateContainer}>
-            <Text style={styles.date}>
-              {formateDate(item.deadline, item.left)}
-            </Text>
+            {formateDate(item.deadline, item.left) && (
+              <Text style={styles.date}>
+                {formateDate(item.deadline, item.left)}
+              </Text>
+            )}
           </View>
           <View>
             {item.tasks.map((task, index) => (

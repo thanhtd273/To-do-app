@@ -1,23 +1,35 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
+
 import Colors from '../utils/Colors';
 import {TEMPLATE} from '../utils/data';
 import SubjectItem from './UI/SubjectItem';
 
 const SubjectBar = () => {
-  const data = useSelector(state => state.data.data);
-  const dispatch = useDispatch();
+  const subjectState = useSelector(state => state.subject);
+
   return (
     <ScrollView contentContainerStyle={styles.container} horizontal={true}>
-      <SubjectItem subject="ALL" style={{backgroundColor: Colors.bluePurple}} />
-      {TEMPLATE.map(subject => (
+      <SubjectItem
+        subject="All"
+        style={
+          (subjectState === 'All' || subjectState.subject === 'All') && {
+            backgroundColor: Colors.bluePurple,
+          }
+        }
+      />
+      {TEMPLATE.map(item => (
         <SubjectItem
-          key={subject.id}
-          icon={subject.icon}
-          subject={subject.subject}
-          color={subject.iconColor}
-          style={{backgroundColor: Colors.bluePurple}}
+          key={item.id}
+          icon={item.icon}
+          subject={item.subject}
+          color={item.iconColor}
+          style={
+            subjectState === item.subject && {
+              backgroundColor: Colors.bluePurple,
+            }
+          }
         />
       ))}
     </ScrollView>

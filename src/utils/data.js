@@ -1,3 +1,6 @@
+import Subject from '../models/Subject';
+import Task from '../models/Task';
+
 const TEMPLATE = [
   {
     id: 1,
@@ -144,4 +147,98 @@ const TEMPLATE = [
     ],
   },
 ];
-export {TEMPLATE};
+
+const DATA = [
+  new Subject(1, 'Work', 'monitor', '#34fc7a', [
+    new Task('w1', 'Continue to-do-app', '2022-11-30T22:30', false),
+    new Task('w2', 'Install authetication for app', '2023-01-15T10:30', false),
+    new Task('w3', 'Implement new task screen', '2022-12-01T12:00', false),
+    new Task('w4', 'Design DATA for application', '2022-11-22T22:30', false),
+    new Task(
+      'w5',
+      'Implement footer of application',
+      '2022-11-22T22:30',
+      false,
+    ),
+    new Task(
+      'w6',
+      'Connect app to Realtime databse',
+      '2022-12-10T22:30',
+      false,
+    ),
+  ]),
+  new Subject(2, 'Study', 'school', '#fcaa46', [
+    new Task(
+      's1',
+      'Do English exercise on Richmmond',
+      '2022-11-28T08:00',
+      false,
+    ),
+    new Task(
+      's2',
+      'Digital and analog circuit laboratory',
+      '2022-11-27T12:00',
+      false,
+    ),
+    new Task('s3', 'Take part in civic activity', '2022-11-28T13:00', false),
+    new Task(
+      's4',
+      'Continue studying React Native - The pratice guide course',
+      '2022-11-23T21:00',
+      false,
+    ),
+    new Task('s5', 'Pratice English pronuciation', '2022-11-23T7:15', false),
+    new Task(
+      's6',
+      'Learn English vocabulary and grammar',
+      '2022-11-23T7:15',
+      false,
+    ),
+  ]),
+  new Subject(3, 'Sport', 'sports-football', '#6e83de', [
+    new Task('sp1', 'Play basketball with friends', '2022-11-22T17', false),
+    new Task(
+      'sp2',
+      'Run around dormitary three times',
+      '2022-11-23T06:15',
+      false,
+    ),
+    new Task(
+      'sp3',
+      'Watch Argentina vs Saudi Arabia match',
+      '2022-11-22T17',
+      false,
+    ),
+    new Task('sp4', 'Watch Germany vs Japan match', '2022-11-23T20', false),
+  ]),
+  new Subject(4, 'Friend', 'people', '#cc9299', [
+    new Task(
+      'f1',
+      'Have a date with crush Thao Phuong',
+      '2022-12-05T08',
+      false,
+    ),
+    new Task(
+      'f2',
+      'Explore Saigon with friends by motorbike',
+      '2022-11-18T08',
+      false,
+    ),
+    new Task('f3', 'Go swimming', '2022-11-27T14', false),
+    new Task('f4', 'Chat with Thao Phuong regularer', '2022-11-24T20', false),
+    new Task(
+      'f5',
+      'Save money to hang out with Thao Phuong',
+      '2022-12-01T23:59',
+      false,
+    ),
+    new Task('f6', 'Have dinner with Quang Trung', '2022-11-22T18', false),
+  ]),
+  new Subject(5, 'Others', 'dynamic-feed', '#b9c3cb', [
+    new Task('o1', 'Call video with My Lien', '2022-11-22T18:45', false),
+    new Task('o2', 'Clean the bedroom', '2022-11-28T07:45', false),
+    new Task('o3', 'Washing clothers', '2022-11-24T18:30', false),
+  ]),
+];
+
+export {TEMPLATE, DATA};

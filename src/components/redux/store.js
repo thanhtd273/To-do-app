@@ -1,9 +1,9 @@
 import {configureStore} from '@reduxjs/toolkit';
 
-import dataReducer from './data';
+import subjectReducer from './subject';
 
 export const store = configureStore({
   reducer: {
-    data: dataReducer,
+    subject: subjectReducer,
   },
 });
