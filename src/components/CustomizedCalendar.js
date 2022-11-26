@@ -1,20 +1,54 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {Button, StyleSheet, Text, View} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import Colors from '../utils/Colors';
+import IconButton from './UI/IconButton';
 
-const CustomizedCalendar = () => {
-  const today = new Date();
+const CustomizedCalendar = ({onPress}) => {
+  const [selectedDate, setSelectedDate] = useState(new Date().toDateString());
   return (
-    <Calendar
-      // initialDate={today}
-      theme={{
-        // calendarBackground: Colors.theme,
-        // textSectionTitleColor: '#b6c1cd',
-        selectedDayBackgroundColor: 'red',
-        todayBackgroundColor: '#b6c1cd',
-      }}
-    />
+    <View
+      style={{
+        alignSelf: 'center',
+      }}>
+      <Calendar
+        disabledByDefault={false}
+        style={{
+          position: 'relative',
+          width: 350,
+          height: 350,
+          borderRadius: 16,
+        }}
+        onDayPress={day => {
+          onPress();
+          setSelectedDate(day.dateString);
+        }}
+        markingType="custom"
+        markedDates={{
+          [selectedDate]: {
+            customStyles: {
+              container: {
+                backgroundColor: '#c86315',
+              },
+            },
+          },
+        }}
+        theme={{
+          calendarBackground: '#343456',
+          dayTextColor: '#fff',
+          textDisabledColor: '#4f4f91',
+          selectedDayBackgroundColor: '#00adf5',
+          selectedDayTextColor: '#ffffff',
+        }}
+        renderHeader={date => {
+          return (
+            <Text style={{color: '#fff'}}>
+              {new Date(selectedDate).toDateString()}
+            </Text>
+          );
+        }}
+      />
+    </View>
   );
 };
 

@@ -1,5 +1,4 @@
 import {createSlice} from '@reduxjs/toolkit';
-import produce from 'immer';
 
 const subjectSlice = createSlice({
   name: 'subject',
@@ -14,4 +13,4 @@ const subjectSlice = createSlice({
 });
 
 export const changeSubject = subjectSlice.actions.changeSubject;
-export default subjectSlice.reducer;
+export const subjectReducer = subjectSlice.reducer;

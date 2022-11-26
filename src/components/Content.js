@@ -2,6 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Colors from '../utils/Colors';
+import CustomizedCalendar from './CustomizedCalendar';
 import TaskContentItem from './UI/TaskContentItem';
 
 const Content = ({data}) => {
@@ -78,7 +79,6 @@ const Content = ({data}) => {
 
   const formateDate = (date, left) => {
     const formated = date?.toLocaleDateString('en-US', {
-      // weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -90,35 +90,38 @@ const Content = ({data}) => {
 
   const navigation = useNavigation();
   const handlePressTag = () => {
-    navigation.navigate('EditTask');
+    navigation.navigate('NewTask');
   };
   return (
-    <ScrollView style={styles.container}>
-      {sortedData.map((item, index) => (
-        <View key={index}>
-          <View style={styles.dateContainer}>
-            {formateDate(item.deadline, item.left) && (
-              <Text style={styles.date}>
-                {formateDate(item.deadline, item.left)}
-              </Text>
-            )}
+    <>
+      {/* <CustomizedCalendar /> */}
+      <ScrollView style={styles.container}>
+        {sortedData.map((item, index) => (
+          <View key={index}>
+            <View style={styles.dateContainer}>
+              {formateDate(item.deadline, item.left) && (
+                <Text style={styles.date}>
+                  {formateDate(item.deadline, item.left)}
+                </Text>
+              )}
+            </View>
+            <View>
+              {item.tasks.map((task, index) => (
+                <TaskContentItem
+                  key={index}
+                  title={task.title}
+                  deadline={task.deadline}
+                  subject={item.subject}
+                  subjectIcon={task.icon}
+                  subjectIconColor={task.iconColor}
+                  onPress={handlePressTag}
+                />
+              ))}
+            </View>
           </View>
-          <View>
-            {item.tasks.map((task, index) => (
-              <TaskContentItem
-                key={index}
-                title={task.title}
-                deadline={task.deadline}
-                subject={item.subject}
-                subjectIcon={task.icon}
-                subjectIconColor={task.iconColor}
-                onPress={handlePressTag}
-              />
-            ))}
-          </View>
-        </View>
-      ))}
-    </ScrollView>
+        ))}
+      </ScrollView>
+    </>
   );
 };
 
@@ -128,6 +131,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 0.5,
     backgroundColor: Colors.theme,
+    // opacity: 0.2,
+    // justifyContent: 'center',
   },
   dateContainer: {
     marginTop: 12,
