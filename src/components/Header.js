@@ -5,7 +5,6 @@ import Colors from '../utils/Colors';
 import SubjectBar from './SubjectBar';
 
 import IconButton from './UI/IconButton';
-import SubjectItem from './UI/SubjectItem';
 
 const Header = () => {
   return (
@@ -32,7 +31,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.3,
+    flex: 0.2,
   },
   topStyle: {
     flexDirection: 'row',

@@ -4,11 +4,13 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from '@rneui/themed';
 import {Provider} from 'react-redux';
+import axios from 'axios';
 
 import TasksOverviewScreen from './src/screens/TasksOverviewScreen';
 import TaskEditionScreen from './src/screens/TaskEditionScreen';
 import {store} from './src/components/redux/store';
-import CreateNewTaskScreen from './src/screens/CreateNewTaskScreen';
+import ManageTask from './src/screens/ManageTask';
+import {DATA} from './src/utils/data';
 
 const BottomTabs = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -59,8 +61,8 @@ const App = () => {
           />
           <Stack.Screen name="EditTask" component={TaskEditionScreen} />
           <Stack.Screen
-            name="NewTask"
-            component={CreateNewTaskScreen}
+            name="ManageTask"
+            component={ManageTask}
             options={{
               title: 'New task',
             }}

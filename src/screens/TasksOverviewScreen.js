@@ -21,7 +21,7 @@ const TasksOverviewScreen = () => {
       {/* <CustomizedCalendar /> */}
       <View style={styles.content}>
         <Header />
-        <Content data={data} />
+        <Content argument={data} />
         <Footer />
       </View>
     </View>

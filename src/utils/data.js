@@ -150,36 +150,43 @@ const TEMPLATE = [
 
 const DATA = [
   new Subject(1, 'Work', 'monitor', '#34fc7a', [
-    new Task('w1', 'Continue to-do-app', new Date('2022-11-30T22:30'), false),
+    new Task('w1', 'Continue to-do-app', new Date('2022-11-30T22:30'), false, [
+      new Date('2022-16-30T22:30'),
+    ]),
     new Task(
       'w2',
       'Install authetication for app',
       new Date('2023-01-15T10:30'),
       false,
+      [new Date('2023-02-15T10:30')],
     ),
     new Task(
       'w3',
       'Implement new task screen',
       new Date('2022-12-01T12:00'),
       false,
+      [new Date('2022-12-15T12:00')],
     ),
     new Task(
       'w4',
       'Design DATA for application',
       new Date('2022-11-22T22:30'),
       false,
+      [new Date('2022-12-22T22:30')],
     ),
     new Task(
       'w5',
       'Implement footer of application',
       new Date('2022-11-22T22:30'),
       false,
+      [new Date('2022-12-22T22:30')],
     ),
     new Task(
       'w6',
       'Connect app to Realtime databse',
       new Date('2022-12-10T22:30'),
       false,
+      [new Date('2022-12-25T22:30')],
     ),
   ]),
   new Subject(2, 'Study', 'school', '#fcaa46', [
@@ -188,36 +195,42 @@ const DATA = [
       'Do English exercise on Richmmond',
       new Date('2022-11-28T08:00'),
       false,
+      [new Date('2022-12-28T08:00')],
     ),
     new Task(
       's2',
       'Digital and analog circuit laboratory',
       new Date('2022-11-27T12:00'),
       false,
+      [new Date('2022-11-27T12:00')],
     ),
     new Task(
       's3',
       'Take part in civic activity',
       new Date('2022-11-28T13:00'),
       false,
+      [new Date('2022-12-28T13:00')],
     ),
     new Task(
       's4',
       'Continue studying React Native - The pratice guide course',
       new Date('2022-11-23T21:00'),
       false,
+      [new Date('2022-12-23T21:00')],
     ),
     new Task(
       's5',
       'Pratice English pronuciation',
       new Date('2022-11-23T07:15'),
       false,
+      [new Date('2022-12-23T07:15')],
     ),
     new Task(
       's6',
       'Learn English vocabulary and grammar',
       new Date('2022-11-23T07:15'),
       false,
+      [new Date('2022-12-23T07:15')],
     ),
   ]),
   new Subject(3, 'Sport', 'sports-football', '#6e83de', [
@@ -226,24 +239,28 @@ const DATA = [
       'Play basketball with friends',
       new Date('2022-11-22T17:00'),
       false,
+      [new Date('2022-12-22T17:00')],
     ),
     new Task(
       'sp2',
       'Run around dormitary three times',
       new Date('2022-11-23T06:15'),
       false,
+      new Date('2022-10-23T06:15'),
     ),
     new Task(
       'sp3',
       'Watch Argentina vs Saudi Arabia match',
       new Date('2022-11-22T17:00'),
       false,
+      [new Date('2022-10-22T17:00')],
     ),
     new Task(
       'sp4',
       'Watch Germany vs Japan match',
       new Date('2022-11-23T20:00'),
       false,
+      [new Date('2022-10-23T20:00')],
     ),
   ]),
   new Subject(4, 'Friend', 'people', '#cc9299', [
@@ -252,12 +269,14 @@ const DATA = [
       'Have a date with crush Thao Phuong',
       new Date('2022-12-05T08:00'),
       false,
+      [new Date('2022-11-05T08:00')],
     ),
     new Task(
       'f2',
       'Explore Saigon with friends by motorbike',
       new Date('2022-11-28T08:00'),
       false,
+      [new Date('2022-10-28T08:00')],
     ),
     new Task('f3', 'Go swimming', new Date('2022-11-27T14:00'), false),
     new Task(
@@ -265,18 +284,21 @@ const DATA = [
       'Chat with Thao Phuong regularer',
       new Date('2022-11-24T20:00'),
       false,
+      [new Date('2022-10-24T20:00')],
     ),
     new Task(
       'f5',
       'Save money to hang out with Thao Phuong',
       new Date('2022-12-01T23:59'),
       false,
+      [new Date('2022-11-01T23:59')],
     ),
     new Task(
       'f6',
       'Have dinner with Quang Trung',
       new Date('2022-11-22T18:00'),
       false,
+      [new Date('2022-10-22T18:00')],
     ),
   ]),
   new Subject(5, 'Others', 'dynamic-feed', '#b9c3cb', [
@@ -285,10 +307,43 @@ const DATA = [
       'Call video with My Lien',
       new Date('2022-11-22T18:45'),
       false,
+      [new Date('2022-10-22T18:45')],
     ),
-    new Task('o2', 'Clean the bedroom', new Date('2022-11-28T07:45'), false),
-    new Task('o3', 'Washing clothers', new Date('2022-11-24T18:30'), false),
+    new Task('o2', 'Clean the bedroom', new Date('2022-11-28T07:45'), false, [
+      new Date('2022-10-28T07:45'),
+    ]),
+    new Task('o3', 'Washing clothers', new Date('2022-11-24T18:30'), false, [
+      new Date('2022-11-24T18:30'),
+    ]),
   ]),
 ];
 
-export {TEMPLATE, DATA};
+const SUBJECTS = [
+  {
+    subject: 'Work',
+    icon: 'monitor',
+    iconColor: '#34fc7a',
+  },
+  {
+    subject: 'Study',
+    icon: 'monitor',
+    iconColor: '#fcaa46',
+  },
+  {
+    subject: 'Sport',
+    icon: 'sports-football',
+    iconColor: '#6e83de',
+  },
+  {
+    subject: 'Friend',
+    icon: 'people',
+    iconColor: '#cc9299',
+  },
+  {
+    subject: 'Others',
+    icon: 'dynamic-feed',
+    iconColor: '#b9c3cb',
+  },
+];
+
+export {TEMPLATE, DATA, SUBJECTS};

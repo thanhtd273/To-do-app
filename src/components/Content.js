@@ -1,25 +1,38 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {SectionList} from 'react-native';
+import {
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+
 import Colors from '../utils/Colors';
-import CustomizedCalendar from './CustomizedCalendar';
 import TaskContentItem from './UI/TaskContentItem';
 
-const Content = ({data}) => {
+const Content = ({argument}) => {
+  const navigation = useNavigation();
   const calculateDateLeft = (date1, date2) =>
     Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
+
   const sortedData = [];
-  if (Array.isArray(data)) {
-    for (let item of data) {
+
+  if (Array.isArray(argument)) {
+    for (let item of argument) {
       item.tasks.forEach(task => {
         const dateLeft = calculateDateLeft(new Date(), task.deadline);
         const haveSameDateLeft = sortedData.find(
           element => element.left === dateLeft,
         );
         if (haveSameDateLeft || haveSameDateLeft === 0) {
-          haveSameDateLeft.tasks.push({
+          haveSameDateLeft.data.push({
+            id: task.id,
             title: task.title,
             isCompleted: task.isCompleted,
+            subject: item.subject,
             icon: item.icon,
             iconColor: item.iconColor,
             deadline: task.deadline,
@@ -28,10 +41,12 @@ const Content = ({data}) => {
           sortedData.push({
             left: dateLeft,
             deadline: task.deadline,
-            tasks: [
+            data: [
               {
+                id: task.id,
                 deadline: task.deadline,
                 iconColor: item.iconColor,
+                subject: item.subject,
                 icon: item.icon,
                 title: task.title,
                 isCompleted: task.isCompleted,
@@ -42,26 +57,30 @@ const Content = ({data}) => {
       });
     }
   } else {
-    data.tasks.forEach(task => {
+    argument.tasks.forEach(task => {
       const dateLeft = calculateDateLeft(new Date(), task.deadline);
       const haveSameDateLeft = sortedData.find(item => item.left === dateLeft);
       if (haveSameDateLeft || haveSameDateLeft === 0)
-        haveSameDateLeft.tasks.push({
+        haveSameDateLeft.data.push({
+          id: task.id,
           title: task.title,
           isCompleted: task.isCompleted,
-          icon: data.icon,
-          iconColor: data.iconColor,
+          subject: argument.subject,
+          icon: argument.icon,
+          iconColor: argument.iconColor,
           deadline: task.deadline,
         });
       else {
         sortedData.push({
           left: dateLeft,
           deadline: task.deadline,
-          tasks: [
+          data: [
             {
+              id: task.id,
               deadline: task.deadline,
-              icon: data.icon,
-              iconColor: data.iconColor,
+              subject: argument.subject,
+              icon: argument.icon,
+              iconColor: argument.iconColor,
               title: task.title,
               isCompleted: task.isCompleted,
             },
@@ -87,41 +106,46 @@ const Content = ({data}) => {
     else if (left === 1) return `Tommorow, ${formated}`;
     return formated;
   };
+  const renderTaskItem = ({item}) => {
+    const handlePressTaskItem = () => {
+      navigation.navigate('ManageTask', {
+        id: item.id,
+      });
+    };
 
-  const navigation = useNavigation();
-  const handlePressTag = () => {
-    navigation.navigate('NewTask');
+    return (
+      <TaskContentItem
+        id={item.id}
+        title={item.title}
+        deadline={item.deadline}
+        subject={item.subject}
+        subjectIcon={item.icon}
+        subjectIconColor={item.iconColor}
+        onPress={handlePressTaskItem}
+      />
+    );
   };
+  const Title = ({deadline, left}) => {
+    return (
+      <View style={styles.dateContainer}>
+        {formateDate(deadline, left) && (
+          <Text style={styles.date}>{formateDate(deadline, left)}</Text>
+        )}
+      </View>
+    );
+  };
+
   return (
-    <>
-      {/* <CustomizedCalendar /> */}
-      <ScrollView style={styles.container}>
-        {sortedData.map((item, index) => (
-          <View key={index}>
-            <View style={styles.dateContainer}>
-              {formateDate(item.deadline, item.left) && (
-                <Text style={styles.date}>
-                  {formateDate(item.deadline, item.left)}
-                </Text>
-              )}
-            </View>
-            <View>
-              {item.tasks.map((task, index) => (
-                <TaskContentItem
-                  key={index}
-                  title={task.title}
-                  deadline={task.deadline}
-                  subject={item.subject}
-                  subjectIcon={task.icon}
-                  subjectIconColor={task.iconColor}
-                  onPress={handlePressTag}
-                />
-              ))}
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-    </>
+    <View style={styles.container}>
+      <SectionList
+        sections={sortedData}
+        keyExtractor={(item, index) => index}
+        renderItem={renderTaskItem}
+        renderSectionHeader={({section: {deadline, left}}) => (
+          <Title deadline={deadline} left={left} />
+        )}
+      />
+    </View>
   );
 };
 
@@ -129,10 +153,8 @@ export default Content;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.5,
+    flex: 0.7,
     backgroundColor: Colors.theme,
-    // opacity: 0.2,
-    // justifyContent: 'center',
   },
   dateContainer: {
     marginTop: 12,

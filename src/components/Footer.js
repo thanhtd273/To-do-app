@@ -8,7 +8,7 @@ import IconButton from './UI/IconButton';
 const Footer = () => {
   const navigation = useNavigation();
   const handlePressAddButton = () => {
-    navigation.navigate('NewTask');
+    navigation.navigate('ManageTask');
   };
   return (
     <View style={styles.container}>
@@ -33,7 +33,7 @@ export default Footer;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.15,
+    flex: 0.1,
     backgroundColor: Colors.theme,
     flexDirection: 'row',
     alignItems: 'center',
