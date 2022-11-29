@@ -81,8 +81,8 @@ const ManageTask = ({route, navigation}) => {
     dispatch(changeSubject({subject: 'All'}));
     navigation.goBack();
   };
-  console.log('Input: ', inputs);
-  console.log('Task: ', tasks);
+  // console.log('Input: ', inputs);
+  // console.log('Task: ', tasks);
   return (
     <>
       <DatePicker

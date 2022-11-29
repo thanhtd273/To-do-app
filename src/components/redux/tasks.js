@@ -8,6 +8,9 @@ const tasksSlice = createSlice({
     tasks: [],
   },
   reducers: {
+    setTasks: (state, action) => {
+      return action.payload.tasks;
+    },
     addTask: (state, action) => {
       const indexBySubject = state.tasks.findIndex(
         item => item.subject === action.payload.subject,
@@ -42,6 +45,7 @@ const tasksSlice = createSlice({
   },
 });
 
+export const setTasks = tasksSlice.actions.setTasks;
 export const addTask = tasksSlice.actions.addTask;
 export const deleteTask = tasksSlice.actions.deleteTask;
 export const updateTask = tasksSlice.actions.updateTask;

@@ -4,7 +4,7 @@ import {View, TextInput, StyleSheet} from 'react-native';
 const TitleInput = ({textInputConfig}) => {
   return (
     <View style={styles.inputContainer}>
-      <TextInput {...textInputConfig} style={styles.input} multiline={true} />
+      <TextInput {...textInputConfig} style={styles.input} multiline={false} />
     </View>
   );
 };

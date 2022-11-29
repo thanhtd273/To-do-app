@@ -1,13 +1,27 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Colors from '../utils/Colors';
-import {TEMPLATE} from '../utils/data';
+import {DATA} from '../utils/data';
+import {fetchTasks} from '../utils/http';
 import SubjectItem from './UI/SubjectItem';
+import {setTasks} from './redux/tasks';
 
 const SubjectBar = ({isContainedAll}) => {
   const subjectState = useSelector(state => state.subject);
+  const tasks = useSelector(state => state.tasks);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getTasksFromFirebase = async () => {
+      const data = await fetchTasks();
+      dispatch(setTasks({tasks: data}));
+    };
+    getTasksFromFirebase();
+  }, []);
+
+  console.log(tasks);
 
   return (
     <ScrollView contentContainerStyle={styles.container} horizontal={true}>
@@ -21,9 +35,9 @@ const SubjectBar = ({isContainedAll}) => {
           }
         />
       )}
-      {TEMPLATE.map(item => (
+      {DATA.map((item, index) => (
         <SubjectItem
-          key={item.id}
+          key={index}
           icon={item.icon}
           subject={item.subject}
           color={item.iconColor}
