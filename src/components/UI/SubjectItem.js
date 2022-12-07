@@ -7,16 +7,16 @@ import {changeSubject} from '../redux/subject';
 import Colors from '../../utils/Colors';
 
 const SubjectItem = ({icon, color, subject, style}) => {
-  const subjectState = useSelector(state => state.subject);
   const dispatch = useDispatch();
   const handlePressSubjectButton = () => {
     dispatch(changeSubject({subject: subject}));
   };
+
   return (
     <Pressable
       style={[styles.container, style]}
       onPress={handlePressSubjectButton}>
-      <View style={[styles.subject]}>
+      <View style={styles.subject}>
         {icon && <Icon name={icon} size={20} color={color} />}
         <Text style={styles.text}>{subject}</Text>
       </View>

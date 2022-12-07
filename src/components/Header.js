@@ -14,6 +14,7 @@ const Header = () => {
           style={styles.input}
           placeholder="Search"
           placeholderTextColor="#48497b"
+          // onSubmitEditing={({nativeEvent}) => console.log(nativeEvent.text)}
         />
         <IconButton
           icon="calendar-today"
@@ -45,6 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#121230',
     borderRadius: 12,
     paddingLeft: 12,
+    color: 'white',
   },
   pressedCalendar: {
     backgroundColor: Colors.bluePurple,

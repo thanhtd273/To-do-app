@@ -4,24 +4,11 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import Colors from '../utils/Colors';
 import {DATA} from '../utils/data';
-import {fetchTasks} from '../utils/http';
 import SubjectItem from './UI/SubjectItem';
-import {setTasks} from './redux/tasks';
+import {changeSubject} from './redux/subject';
 
 const SubjectBar = ({isContainedAll}) => {
   const subjectState = useSelector(state => state.subject);
-  const tasks = useSelector(state => state.tasks);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const getTasksFromFirebase = async () => {
-      const data = await fetchTasks();
-      dispatch(setTasks({tasks: data}));
-    };
-    getTasksFromFirebase();
-  }, []);
-
-  console.log(tasks);
 
   return (
     <ScrollView contentContainerStyle={styles.container} horizontal={true}>

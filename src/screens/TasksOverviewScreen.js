@@ -1,24 +1,38 @@
-import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import {useSelector} from 'react-redux';
+import React, {useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Content from '../components/Content';
-import CustomizedCalendar from '../components/CustomizedCalendar';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Colors from '../utils/Colors';
-import {DATA, TEMPLATE} from '../utils/data';
+import {fetchTasks} from '../utils/http';
+import {setTasks} from '../components/redux/tasks';
 
 const TasksOverviewScreen = () => {
   const subjectState = useSelector(state => state.subject);
-  let data = DATA.find(
+  let tasks = useSelector(state => state.tasks);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getDataFromFirebase = async () => {
+      const data = await fetchTasks();
+      dispatch(setTasks({tasks: data}));
+    };
+    getDataFromFirebase();
+  }, []);
+  let data = [];
+
+  if (!Array.isArray(tasks)) tasks = tasks.tasks;
+  data = tasks.find(
     item =>
       item.subject === subjectState || item.subject === subjectState.subject,
   );
-  if (typeof data === 'undefined') data = DATA;
+
+  if (typeof data === 'undefined') data = tasks;
+
   return (
     <View style={styles.container}>
-      {/* <CustomizedCalendar /> */}
       <View style={styles.content}>
         <Header />
         <Content argument={data} />
@@ -27,7 +41,6 @@ const TasksOverviewScreen = () => {
     </View>
   );
 };
-
 export default TasksOverviewScreen;
 
 const styles = StyleSheet.create({
@@ -39,6 +52,5 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: '#070717',
-    // opacity: 0.1,
   },
 });

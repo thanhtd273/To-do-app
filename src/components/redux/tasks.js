@@ -12,6 +12,8 @@ const tasksSlice = createSlice({
       return action.payload.tasks;
     },
     addTask: (state, action) => {
+      console.log('action.payload: ', action.payload);
+      console.log(state);
       const indexBySubject = state.tasks.findIndex(
         item => item.subject === action.payload.subject,
       );
@@ -22,7 +24,7 @@ const tasksSlice = createSlice({
         state.tasks.push({
           subject: action.payload.subject,
           icon: currentSubject.icon,
-          iconColor: currentSubject.icon,
+          iconColor: currentSubject.iconColor,
           tasks: [
             {
               title: action.payload.title,

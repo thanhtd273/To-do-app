@@ -26,7 +26,6 @@ const fetchTasks = async () => {
     };
     tasks.push(taskObj);
   }
-
   return tasks;
 };
 

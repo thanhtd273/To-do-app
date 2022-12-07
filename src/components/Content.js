@@ -1,14 +1,7 @@
-import {useNavigation} from '@react-navigation/native';
 import React from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {SectionList} from 'react-native';
-import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 import Colors from '../utils/Colors';
 import TaskContentItem from './UI/TaskContentItem';
@@ -23,7 +16,7 @@ const Content = ({argument}) => {
   if (Array.isArray(argument)) {
     for (let item of argument) {
       item.tasks.forEach(task => {
-        const dateLeft = calculateDateLeft(new Date(), task.deadline);
+        const dateLeft = calculateDateLeft(new Date(), new Date(task.deadline));
         const haveSameDateLeft = sortedData.find(
           element => element.left === dateLeft,
         );
@@ -35,16 +28,16 @@ const Content = ({argument}) => {
             subject: item.subject,
             icon: item.icon,
             iconColor: item.iconColor,
-            deadline: task.deadline,
+            deadline: new Date(task.deadline),
           });
         } else {
           sortedData.push({
             left: dateLeft,
-            deadline: task.deadline,
+            deadline: new Date(task.deadline),
             data: [
               {
                 id: task.id,
-                deadline: task.deadline,
+                deadline: new Date(task.deadline),
                 iconColor: item.iconColor,
                 subject: item.subject,
                 icon: item.icon,
@@ -58,7 +51,7 @@ const Content = ({argument}) => {
     }
   } else {
     argument.tasks.forEach(task => {
-      const dateLeft = calculateDateLeft(new Date(), task.deadline);
+      const dateLeft = calculateDateLeft(new Date(), new Date(task.deadline));
       const haveSameDateLeft = sortedData.find(item => item.left === dateLeft);
       if (haveSameDateLeft || haveSameDateLeft === 0)
         haveSameDateLeft.data.push({
@@ -68,16 +61,16 @@ const Content = ({argument}) => {
           subject: argument.subject,
           icon: argument.icon,
           iconColor: argument.iconColor,
-          deadline: task.deadline,
+          deadline: new Date(task.deadline),
         });
       else {
         sortedData.push({
           left: dateLeft,
-          deadline: task.deadline,
+          deadline: new Date(task.deadline),
           data: [
             {
               id: task.id,
-              deadline: task.deadline,
+              deadline: new Date(task.deadline),
               subject: argument.subject,
               icon: argument.icon,
               iconColor: argument.iconColor,

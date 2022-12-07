@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Subject from '../models/Subject';
 import Task from '../models/Task';
 
@@ -326,7 +327,7 @@ const SUBJECTS = [
   },
   {
     subject: 'Study',
-    icon: 'monitor',
+    icon: 'school',
     iconColor: '#fcaa46',
   },
   {

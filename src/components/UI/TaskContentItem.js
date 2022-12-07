@@ -11,11 +11,11 @@ const TaskContentItem = ({
   subject,
   onPress,
 }) => {
-  const [check, setCheck] = useState(deadline < new Date());
+  const [check, setCheck] = useState(false);
   const formatTime = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-  }).format(deadline);
+  }).format(new Date(deadline));
 
   return (
     <Pressable

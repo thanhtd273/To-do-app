@@ -13,7 +13,7 @@ import Attachment from '../components/ManageTask/Attachment';
 import {changeSubject} from '../components/redux/subject';
 
 const ManageTask = ({route, navigation}) => {
-  const tasks = useSelector(state => state.tasks.tasks);
+  const tasks = useSelector(state => state.tasks);
   const subject = useSelector(state => state.subject);
   const dispatch = useDispatch();
   const [isOpenDate, setOpenDate] = useState(false);
@@ -21,17 +21,10 @@ const ManageTask = ({route, navigation}) => {
   const [reminder, setReminder] = useState(new Date());
   const [isOpenReminder, setOpenReminder] = useState(false);
 
-  const [inputs, setInputs] = useState({
-    title: '',
-    subject: '',
-    deadline: '',
-    reminders: [],
-  });
+  const [title, setTitle] = useState('');
 
-  const inputChangeHandler = (inputIdentifier, enteredValue) => {
-    setInputs(currentInput => {
-      return {...currentInput, [inputIdentifier]: enteredValue};
-    });
+  const inputChangeHandler = ({nativeEvent}) => {
+    setTitle(nativeEvent.text);
   };
 
   const edittedTaskId = route.params?.id;
@@ -62,27 +55,18 @@ const ManageTask = ({route, navigation}) => {
     setOpenReminder(false);
     setReminder(date);
   };
-  useEffect(() => {
-    if (typeof subject === 'string') {
-      setInputs(currentInput => {
-        return {
-          ...currentInput,
-          subject: subject,
-          reminders: isEdditing
-            ? [...currentInput.reminders, reminder.toString()]
-            : [reminder.toString()],
-          deadline: selectedDate.toString(),
-        };
-      });
-    }
-  }, [subject]);
+
   const handleConfirm = () => {
-    dispatch(addTask(inputs));
-    dispatch(changeSubject({subject: 'All'}));
+    const data = {
+      title: title,
+      subject: subject,
+      deadline: selectedDate.toString(),
+      reminders: isEdditing ? [reminder.toString()] : [reminder.toString()],
+    };
+    dispatch(addTask(data));
     navigation.goBack();
   };
-  // console.log('Input: ', inputs);
-  // console.log('Task: ', tasks);
+
   return (
     <>
       <DatePicker
@@ -104,8 +88,7 @@ const ManageTask = ({route, navigation}) => {
       <View style={[styles.container]}>
         <TitleInput
           textInputConfig={{
-            onChangeText: inputChangeHandler.bind(this, 'title'),
-            value: inputs.title,
+            onSubmitEditing: inputChangeHandler.bind(this),
           }}
         />
         <Category />
