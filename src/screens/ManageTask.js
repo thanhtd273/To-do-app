@@ -11,9 +11,10 @@ import TitleInput from '../components/ManageTask/TitleInput';
 import Category from '../components/ManageTask/Category';
 import Attachment from '../components/ManageTask/Attachment';
 import {changeSubject} from '../components/redux/subject';
+import {storeNewTask} from '../utils/http';
 
 const ManageTask = ({route, navigation}) => {
-  const tasks = useSelector(state => state.tasks);
+  const tasks = useSelector(state => state.tasks.tasks);
   const subject = useSelector(state => state.subject);
   const dispatch = useDispatch();
   const [isOpenDate, setOpenDate] = useState(false);
@@ -36,6 +37,13 @@ const ManageTask = ({route, navigation}) => {
     });
   }, [navigation, isEdditing]);
 
+  let edittedTask = {};
+  for (const item of tasks) {
+    for (const task of item?.tasks) {
+      if (task.id === edittedTaskId) edittedTask = {...task};
+    }
+  }
+
   const formatDate = date => {
     return new Intl.DateTimeFormat('en-GB', {
       day: '2-digit',
@@ -45,7 +53,7 @@ const ManageTask = ({route, navigation}) => {
       minute: '2-digit',
     }).format(date);
   };
-
+  console.log(new Date(edittedTask.deadline));
   const handleSettingDate = date => {
     setOpenDate(false);
     setSelectedDate(date);
@@ -57,13 +65,19 @@ const ManageTask = ({route, navigation}) => {
   };
 
   const handleConfirm = () => {
-    const data = {
-      title: title,
+    const input = {
       subject: subject,
-      deadline: selectedDate.toString(),
-      reminders: isEdditing ? [reminder.toString()] : [reminder.toString()],
+      data: {
+        title: title,
+        deadline: selectedDate.toString(),
+        reminders: isEdditing ? [reminder.toString()] : [reminder.toString()],
+        isCompleted: false,
+      },
     };
-    dispatch(addTask(data));
+
+    const {id: subjectId} = tasks.find(item => item.subject === input.subject);
+    storeNewTask(subjectId, input.data);
+    dispatch(addTask(input));
     navigation.goBack();
   };
 
@@ -88,6 +102,7 @@ const ManageTask = ({route, navigation}) => {
       <View style={[styles.container]}>
         <TitleInput
           textInputConfig={{
+            // value: edittedTask.title,
             onSubmitEditing: inputChangeHandler.bind(this),
           }}
         />

@@ -15,22 +15,19 @@ const TasksOverviewScreen = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getDataFromFirebase = async () => {
+    const fetchApi = async () => {
       const data = await fetchTasks();
       dispatch(setTasks({tasks: data}));
     };
-    getDataFromFirebase();
+    fetchApi();
   }, []);
   let data = [];
-
   if (!Array.isArray(tasks)) tasks = tasks.tasks;
   data = tasks.find(
     item =>
       item.subject === subjectState || item.subject === subjectState.subject,
   );
-
   if (typeof data === 'undefined') data = tasks;
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>

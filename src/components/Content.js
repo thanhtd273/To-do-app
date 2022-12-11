@@ -12,10 +12,9 @@ const Content = ({argument}) => {
     Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
 
   const sortedData = [];
-
   if (Array.isArray(argument)) {
-    for (let item of argument) {
-      item.tasks.forEach(task => {
+    for (const item of argument) {
+      item?.tasks.forEach(task => {
         const dateLeft = calculateDateLeft(new Date(), new Date(task.deadline));
         const haveSameDateLeft = sortedData.find(
           element => element.left === dateLeft,
@@ -101,6 +100,7 @@ const Content = ({argument}) => {
   };
   const renderTaskItem = ({item}) => {
     const handlePressTaskItem = () => {
+      console.log('Item: ', item);
       navigation.navigate('ManageTask', {
         id: item.id,
       });

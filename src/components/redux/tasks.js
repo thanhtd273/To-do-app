@@ -9,11 +9,10 @@ const tasksSlice = createSlice({
   },
   reducers: {
     setTasks: (state, action) => {
-      return action.payload.tasks;
+      state.tasks = action.payload.tasks;
     },
     addTask: (state, action) => {
       console.log('action.payload: ', action.payload);
-      console.log(state);
       const indexBySubject = state.tasks.findIndex(
         item => item.subject === action.payload.subject,
       );
@@ -27,18 +26,20 @@ const tasksSlice = createSlice({
           iconColor: currentSubject.iconColor,
           tasks: [
             {
-              title: action.payload.title,
-              deadline: action.payload.deadline,
-              reminders: action.payload.reminders,
+              title: action.payload.data.title,
+              deadline: action.payload.data.deadline,
+              reminders: action.payload.data.reminders,
+              isCompleted: false,
             },
           ],
         });
       } else {
         state.tasks[indexBySubject].tasks.push({
-          subject: action.payload.subject,
-          title: action.payload.title,
-          deadline: action.payload.deadline,
-          reminders: action.payload.reminders,
+          // subject: action.payload.subject,
+          title: action.payload.data.title,
+          deadline: action.payload.data.deadline,
+          reminders: action.payload.data.reminders,
+          isCompleted: false,
         });
       }
     },

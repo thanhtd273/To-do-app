@@ -13,20 +13,33 @@ const storeTask = async () => {
 };
 
 const fetchTasks = async () => {
-  const response = await axios.get(`${BACKEND_URL}/tasks.json`);
+  const response = await axios.get(`${BACKEND_URL}/data.json`);
   const tasks = [];
   for (const key in response.data) {
     const item = response.data[key];
+    const data = [];
+    for (const i in item.tasks) {
+      data.push({id: i, ...item.tasks[i]});
+    }
+
     const taskObj = {
       id: key,
       subject: item.subject,
       icon: item.icon,
       iconColor: item.iconColor,
-      tasks: item.tasks,
+      tasks: data,
     };
     tasks.push(taskObj);
   }
   return tasks;
 };
 
-export {storeTask, fetchTasks};
+const storeNewTask = async (subjectId, taskData) => {
+  const response = await axios.post(
+    `${BACKEND_URL}/data/${subjectId}/tasks.json`,
+    taskData,
+  );
+  const id = response.data.name;
+};
+
+export {storeTask, fetchTasks, storeNewTask};
