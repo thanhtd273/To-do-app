@@ -2,6 +2,10 @@ import {useNavigation} from '@react-navigation/native';
 import {CheckBox, Icon} from '@rneui/themed';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import Colors from '../../utils/Colors';
+import {updateCompletion} from '../redux/tasks';
+import IconButton from './IconButton';
 
 const TaskContentItem = ({
   title,
@@ -9,29 +13,43 @@ const TaskContentItem = ({
   subjectIcon,
   subjectIconColor,
   subject,
+  isCompleted,
   onPress,
 }) => {
+  const tasks = useSelector(state => state.tasks.tasks);
+  const dispatch = useDispatch();
+
   const [check, setCheck] = useState(false);
   const formatTime = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(deadline));
 
+  const subjectId = tasks.find(item => item.subject === subject).id;
+  const id = tasks
+    .find(item => item.id === subjectId)
+    .tasks.find(task => task.title === title).id;
+  console.log(id);
+  dispatch(updateCompletion({subjectId: subjectId, id: id}));
+
   return (
     <Pressable
       style={({pressed}) => pressed && styles.pressed}
       onPress={onPress}>
       <View style={styles.container}>
-        <CheckBox
-          checked={check}
-          title={title}
-          onPress={() => setCheck(!check)}
-          containerStyle={styles.checkbox}
-          textStyle={[
-            styles.title,
-            check && {textDecorationLine: 'line-through'},
-          ]}
-        />
+        <View style={styles.abovePart}>
+          <CheckBox
+            checked={isCompleted}
+            title={title}
+            onPress={() => setCheck(!check)}
+            containerStyle={styles.checkbox}
+            textStyle={[
+              styles.title,
+              check && {textDecorationLine: 'line-through'},
+            ]}
+          />
+        </View>
+
         <View style={styles.bottomPart}>
           <View style={styles.time}>
             <Icon name="access-time" color={'#64668c'} />
@@ -61,8 +79,14 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.75,
   },
-  checkbox: {
+  abovePart: {
     height: '50%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: '80%',
     backgroundColor: '#121230',
     paddingVertical: 0,
     marginBottom: 0,
@@ -72,8 +96,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   bottomPart: {
+    height: '50%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginLeft: 18,
     marginRight: 4,
     marginBottom: 18,
@@ -85,6 +111,7 @@ const styles = StyleSheet.create({
   timeText: {
     color: '#fff',
     marginHorizontal: 12,
+    alignSelf: 'center',
   },
   bottomLeftPart: {
     flexDirection: 'row',

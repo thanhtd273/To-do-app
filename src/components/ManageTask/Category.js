@@ -6,41 +6,13 @@ import Colors from '../../utils/Colors';
 
 import {SUBJECTS} from '../../utils/data';
 import {changeSubject} from '../redux/subject';
+import SubjectBar from '../SubjectBar';
 
 const Category = ({onPress}) => {
-  const [subjectState, setSubjectState] = useState('');
-  const subject = useSelector(state => state.subject);
-  const dispatch = useDispatch();
-  const handleChoosingCategory = subject => {
-    setSubjectState(subject);
-    dispatch(changeSubject({subject: subject}));
-  };
-
-  const renderItem = ({item}) => {
-    return (
-      <Pressable
-        style={[
-          styles.subjectContainer,
-          subjectState === item.subject && {backgroundColor: Colors.bluePurple},
-        ]}
-        onPress={() => handleChoosingCategory(item.subject)}>
-        <View style={styles.subjectItem}>
-          <Icon name={item.icon} size={20} color={item.iconColor} />
-          <Text style={styles.subjectText}>{item.subject}</Text>
-        </View>
-      </Pressable>
-    );
-  };
-
   return (
     <View style={styles.categoryContainer}>
       <Text style={styles.title}>Choose category</Text>
-      <FlatList
-        contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
-        data={SUBJECTS}
-        renderItem={renderItem}
-        horizontal={true}
-      />
+      <SubjectBar isContainedAll={false} />
     </View>
   );
 };

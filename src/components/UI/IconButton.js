@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   button: {
     // flex: 1,
     borderRadius: 12,
-    backgroundColor: Colors.bluePurple,
+    // backgroundColor: Colors.bluePurple,
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',

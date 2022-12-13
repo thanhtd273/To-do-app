@@ -43,8 +43,39 @@ const tasksSlice = createSlice({
         });
       }
     },
-    deleteTask: id => {},
-    updateTask: (id, {subject, deadline, title, reminders}) => {},
+    deleteTask: (state, action) => {
+      let deletedTaskArray = [
+        ...state.tasks.find(item => item.id === action.payload.subjectId).tasks,
+      ];
+      deletedTaskArray = deletedTaskArray.filter(
+        item => item.id !== action.payload.id,
+      );
+    },
+    updateTask: (state, action) => {
+      const tasksState = [...state.tasks];
+      let updatedArray = [
+        ...tasksState.find(item => item.id === action.payload.subjectId).tasks,
+      ];
+      updatedArray.forEach((item, index) => {
+        if (item.id === action.payload.id) {
+          const updatingData = action.payload.data;
+          updatedArray[index].title = updatingData.title;
+          updatedArray[index].isCompleted = updatingData.isCompleted;
+          updatedArray[index].reminder = updatingData.reminder;
+          updatedArray[index].deadline = updatingData.deadline;
+        }
+      });
+    },
+    updateCompletion: (state, action) => {
+      const today = new Date();
+      const updatedTask = state.tasks
+        .find(item => item.id === action.payload.subjectId)
+        .tasks.find(task => task.id === action.payload.id);
+
+      // console.log(new Date(updatedTask.deadline) < today);
+      if (new Date(updatedTask.deadline) < today)
+        updatedTask.isCompleted = true;
+    },
   },
 });
 
@@ -52,4 +83,5 @@ export const setTasks = tasksSlice.actions.setTasks;
 export const addTask = tasksSlice.actions.addTask;
 export const deleteTask = tasksSlice.actions.deleteTask;
 export const updateTask = tasksSlice.actions.updateTask;
+export const updateCompletion = tasksSlice.actions.updateCompletion;
 export default tasksSlice.reducer;

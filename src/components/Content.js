@@ -19,31 +19,24 @@ const Content = ({argument}) => {
         const haveSameDateLeft = sortedData.find(
           element => element.left === dateLeft,
         );
+        const data = {
+          subjectId: item.id,
+          id: task.id,
+          title: task.title,
+          isCompleted: task.isCompleted,
+          subject: item.subject,
+          icon: item.icon,
+          iconColor: item.iconColor,
+          deadline: new Date(task.deadline),
+          reminder: new Date(task.reminder),
+        };
         if (haveSameDateLeft || haveSameDateLeft === 0) {
-          haveSameDateLeft.data.push({
-            id: task.id,
-            title: task.title,
-            isCompleted: task.isCompleted,
-            subject: item.subject,
-            icon: item.icon,
-            iconColor: item.iconColor,
-            deadline: new Date(task.deadline),
-          });
+          haveSameDateLeft.data.push(data);
         } else {
           sortedData.push({
             left: dateLeft,
             deadline: new Date(task.deadline),
-            data: [
-              {
-                id: task.id,
-                deadline: new Date(task.deadline),
-                iconColor: item.iconColor,
-                subject: item.subject,
-                icon: item.icon,
-                title: task.title,
-                isCompleted: task.isCompleted,
-              },
-            ],
+            data: [data],
           });
         }
       });
@@ -52,31 +45,24 @@ const Content = ({argument}) => {
     argument.tasks.forEach(task => {
       const dateLeft = calculateDateLeft(new Date(), new Date(task.deadline));
       const haveSameDateLeft = sortedData.find(item => item.left === dateLeft);
+      const data = {
+        subjectId: argument.id,
+        id: task.id,
+        title: task.title,
+        isCompleted: task.isCompleted,
+        subject: argument.subject,
+        icon: argument.icon,
+        iconColor: argument.iconColor,
+        deadline: new Date(task.deadline),
+        reminder: task.reminder,
+      };
       if (haveSameDateLeft || haveSameDateLeft === 0)
-        haveSameDateLeft.data.push({
-          id: task.id,
-          title: task.title,
-          isCompleted: task.isCompleted,
-          subject: argument.subject,
-          icon: argument.icon,
-          iconColor: argument.iconColor,
-          deadline: new Date(task.deadline),
-        });
+        haveSameDateLeft.data.push(data);
       else {
         sortedData.push({
           left: dateLeft,
           deadline: new Date(task.deadline),
-          data: [
-            {
-              id: task.id,
-              deadline: new Date(task.deadline),
-              subject: argument.subject,
-              icon: argument.icon,
-              iconColor: argument.iconColor,
-              title: task.title,
-              isCompleted: task.isCompleted,
-            },
-          ],
+          data: [data],
         });
       }
     });
@@ -103,6 +89,7 @@ const Content = ({argument}) => {
       console.log('Item: ', item);
       navigation.navigate('ManageTask', {
         id: item.id,
+        subjectId: item.subjectId,
       });
     };
 
@@ -114,6 +101,7 @@ const Content = ({argument}) => {
         subject={item.subject}
         subjectIcon={item.icon}
         subjectIconColor={item.iconColor}
+        isCompleted={item.isCompleted}
         onPress={handlePressTaskItem}
       />
     );
@@ -132,7 +120,7 @@ const Content = ({argument}) => {
     <View style={styles.container}>
       <SectionList
         sections={sortedData}
-        keyExtractor={(item, index) => index}
+        keyExtractor={(_, index) => index}
         renderItem={renderTaskItem}
         renderSectionHeader={({section: {deadline, left}}) => (
           <Title deadline={deadline} left={left} />

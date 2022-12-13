@@ -9,7 +9,7 @@ import Colors from '../utils/Colors';
 import {fetchTasks} from '../utils/http';
 import {setTasks} from '../components/redux/tasks';
 
-const TasksOverviewScreen = () => {
+const TasksOverviewScreen = ({navigation}) => {
   const subjectState = useSelector(state => state.subject);
   let tasks = useSelector(state => state.tasks);
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const TasksOverviewScreen = () => {
       dispatch(setTasks({tasks: data}));
     };
     fetchApi();
-  }, []);
+  }, [navigation]);
   let data = [];
   if (!Array.isArray(tasks)) tasks = tasks.tasks;
   data = tasks.find(
@@ -28,6 +28,7 @@ const TasksOverviewScreen = () => {
       item.subject === subjectState || item.subject === subjectState.subject,
   );
   if (typeof data === 'undefined') data = tasks;
+  console.log(tasks);
   return (
     <View style={styles.container}>
       <View style={styles.content}>

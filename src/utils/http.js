@@ -35,11 +35,19 @@ const fetchTasks = async () => {
 };
 
 const storeNewTask = async (subjectId, taskData) => {
-  const response = await axios.post(
-    `${BACKEND_URL}/data/${subjectId}/tasks.json`,
-    taskData,
-  );
-  const id = response.data.name;
+  try {
+    const response = await axios.post(
+      `${BACKEND_URL}/data/${subjectId}/tasks.json`,
+      taskData,
+    );
+    const id = response.data.name;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-export {storeTask, fetchTasks, storeNewTask};
+const updateTaskToBackend = async (subjectId, id, data) => {
+  axios.put(`${BACKEND_URL}/data/${subjectId}/tasks/${id}.json`, data);
+};
+
+export {storeTask, fetchTasks, storeNewTask, updateTaskToBackend};

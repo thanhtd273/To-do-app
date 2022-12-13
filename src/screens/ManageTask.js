@@ -1,48 +1,52 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch, useSelector} from 'react-redux';
 
 import IconButton from '../components/UI/IconButton';
 import Timing from '../components/UI/Timing';
 import Colors from '../utils/Colors';
-import {addTask} from '../components/redux/tasks';
+import {addTask, updateCompletion} from '../components/redux/tasks';
 import TitleInput from '../components/ManageTask/TitleInput';
 import Category from '../components/ManageTask/Category';
 import Attachment from '../components/ManageTask/Attachment';
 import {changeSubject} from '../components/redux/subject';
-import {storeNewTask} from '../utils/http';
+import {storeNewTask, updateTaskToBackend} from '../utils/http';
+import {updateTask} from '../components/redux/tasks';
+import {useRef} from 'react';
+import SubjectBar from '../components/SubjectBar';
 
 const ManageTask = ({route, navigation}) => {
   const tasks = useSelector(state => state.tasks.tasks);
   const subject = useSelector(state => state.subject);
   const dispatch = useDispatch();
   const [isOpenDate, setOpenDate] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [reminder, setReminder] = useState(new Date());
   const [isOpenReminder, setOpenReminder] = useState(false);
-
-  const [title, setTitle] = useState('');
-
-  const inputChangeHandler = ({nativeEvent}) => {
-    setTitle(nativeEvent.text);
-  };
-
-  const edittedTaskId = route.params?.id;
-  const isEdditing = !!edittedTaskId;
-
   useLayoutEffect(() => {
     navigation.setOptions({
       title: isEdditing ? 'Edit Task' : 'New Task',
     });
   }, [navigation, isEdditing]);
 
+  const edittedTaskId = route.params?.id;
+  const edittedSubjId = route.params?.subjectId;
+  const isEdditing = !!edittedTaskId;
+
   let edittedTask = {};
   for (const item of tasks) {
     for (const task of item?.tasks) {
-      if (task.id === edittedTaskId) edittedTask = {...task};
+      if (task.id === edittedTaskId)
+        edittedTask = {...task, subjectId: item.id};
     }
   }
+  const title = useRef(isEdditing ? edittedTask.title : '');
+  const inputChangeHandler = text => {
+    title.current = text;
+  };
+
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [reminder, setReminder] = useState(today);
 
   const formatDate = date => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -53,7 +57,15 @@ const ManageTask = ({route, navigation}) => {
       minute: '2-digit',
     }).format(date);
   };
-  console.log(new Date(edittedTask.deadline));
+  useEffect(() => {
+    if (isEdditing) {
+      const edittedDate = new Date(edittedTask.deadline);
+      const edittedReminder = new Date(edittedTask.reminder);
+      setSelectedDate(edittedDate);
+      setReminder(edittedReminder);
+    }
+  }, []);
+
   const handleSettingDate = date => {
     setOpenDate(false);
     setSelectedDate(date);
@@ -66,21 +78,36 @@ const ManageTask = ({route, navigation}) => {
 
   const handleConfirm = () => {
     const input = {
+      subjectId: isEdditing
+        ? edittedSubjId
+        : tasks.find(item => item.subject === subject).id,
       subject: subject,
       data: {
-        title: title,
+        title: title.current,
         deadline: selectedDate.toString(),
-        reminders: isEdditing ? [reminder.toString()] : [reminder.toString()],
+        reminder: isEdditing ? reminder.toString() : reminder.toString(),
         isCompleted: false,
       },
     };
+    // console.log(tasks);
+    if (isEdditing) {
+      dispatch(
+        updateTask({
+          id: edittedTaskId,
+          subjectId: edittedSubjId,
+          data: input.data,
+        }),
+      );
+      updateTaskToBackend(input.subjectId, edittedTaskId, input.data);
+      dispatch(updateCompletion({subjectId: edittedSubjId, id: edittedTaskId}));
+      console.log(tasks);
+    } else {
+      storeNewTask(input.subjectId, input.data);
+      dispatch(addTask(input));
+    }
 
-    const {id: subjectId} = tasks.find(item => item.subject === input.subject);
-    storeNewTask(subjectId, input.data);
-    dispatch(addTask(input));
     navigation.goBack();
   };
-
   return (
     <>
       <DatePicker
@@ -102,8 +129,8 @@ const ManageTask = ({route, navigation}) => {
       <View style={[styles.container]}>
         <TitleInput
           textInputConfig={{
-            // value: edittedTask.title,
-            onSubmitEditing: inputChangeHandler.bind(this),
+            onChangeText: inputChangeHandler.bind(this),
+            defaultValue: isEdditing ? edittedTask.title : '',
           }}
         />
         <Category />
@@ -167,6 +194,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '80%',
     padding: 12,
+    backgroundColor: Colors.bluePurple,
   },
   text: {
     color: Colors.textTheme,
