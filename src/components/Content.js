@@ -6,20 +6,22 @@ import {StyleSheet, Text, View} from 'react-native';
 import Colors from '../utils/Colors';
 import TaskContentItem from './UI/TaskContentItem';
 
-const Content = ({argument}) => {
+const Content = ({data}) => {
   const navigation = useNavigation();
-  const calculateDateLeft = (date1, date2) =>
-    Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
-
-  const sortedData = [];
-  if (Array.isArray(argument)) {
-    for (const item of argument) {
+  const calculateDateLeft = (date1, date2) => {
+    const result = Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
+    if (result === -0) return 0;
+    return result;
+  };
+  let handledData = [];
+  if (Array.isArray(data)) {
+    for (const item of data) {
       item?.tasks.forEach(task => {
         const dateLeft = calculateDateLeft(new Date(), new Date(task.deadline));
-        const haveSameDateLeft = sortedData.find(
+        const haveSameDateLeft = handledData.find(
           element => element.left === dateLeft,
         );
-        const data = {
+        const itemData = {
           subjectId: item.id,
           id: task.id,
           title: task.title,
@@ -31,48 +33,65 @@ const Content = ({argument}) => {
           reminder: new Date(task.reminder),
         };
         if (haveSameDateLeft || haveSameDateLeft === 0) {
-          haveSameDateLeft.data.push(data);
+          haveSameDateLeft.data.push(itemData);
         } else {
-          sortedData.push({
+          handledData.push({
             left: dateLeft,
             deadline: new Date(task.deadline),
-            data: [data],
+            data: [itemData],
           });
         }
       });
     }
   } else {
-    argument.tasks.forEach(task => {
+    data.tasks.forEach(task => {
       const dateLeft = calculateDateLeft(new Date(), new Date(task.deadline));
-      const haveSameDateLeft = sortedData.find(item => item.left === dateLeft);
-      const data = {
-        subjectId: argument.id,
+      const haveSameDateLeft = handledData.find(item => item.left === dateLeft);
+      const itemData = {
+        subjectId: data.id,
         id: task.id,
         title: task.title,
         isCompleted: task.isCompleted,
-        subject: argument.subject,
-        icon: argument.icon,
-        iconColor: argument.iconColor,
+        subject: data.subject,
+        icon: data.icon,
+        iconColor: data.iconColor,
         deadline: new Date(task.deadline),
         reminder: task.reminder,
       };
       if (haveSameDateLeft || haveSameDateLeft === 0)
-        haveSameDateLeft.data.push(data);
+        haveSameDateLeft.data.push(itemData);
       else {
-        sortedData.push({
+        handledData.push({
           left: dateLeft,
           deadline: new Date(task.deadline),
-          data: [data],
+          data: [itemData],
         });
       }
     });
   }
-  for (let i = 0; i < sortedData.length - 1; i++) {
-    for (let j = i + 1; j < sortedData.length; j++) {
-      if (sortedData[j - 1].left > sortedData[j].left)
-        [sortedData[j - 1], sortedData[j]] = [sortedData[j], sortedData[j - 1]];
+
+  const insertionSort = arr => {
+    let i, key, j;
+    for (i = 0; i < arr.length; i++) {
+      key = arr[i];
+      j = i - 1;
+      while (j >= 0 && arr[j].left > key.left) {
+        arr[j + 1] = arr[j];
+        j = j - 1;
+      }
+      arr[j + 1] = key;
     }
+    return arr;
+  };
+  handledData = insertionSort(handledData);
+
+  const temp = handledData.filter(item => item.left < 0);
+  let numberOfDeletedItems = temp.length;
+  while (numberOfDeletedItems > 0) {
+    handledData.shift();
+    numberOfDeletedItems--;
   }
+  handledData.push(...temp.reverse());
 
   const formateDate = (date, left) => {
     const formated = date?.toLocaleDateString('en-US', {
@@ -119,7 +138,7 @@ const Content = ({argument}) => {
   return (
     <View style={styles.container}>
       <SectionList
-        sections={sortedData}
+        sections={handledData}
         keyExtractor={(_, index) => index}
         renderItem={renderTaskItem}
         renderSectionHeader={({section: {deadline, left}}) => (

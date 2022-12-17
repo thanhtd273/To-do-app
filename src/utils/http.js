@@ -50,4 +50,24 @@ const updateTaskToBackend = async (subjectId, id, data) => {
   axios.put(`${BACKEND_URL}/data/${subjectId}/tasks/${id}.json`, data);
 };
 
-export {storeTask, fetchTasks, storeNewTask, updateTaskToBackend};
+const updateCompletionToBackend = async (subjectId, id) => {
+  const response = await axios(
+    `${BACKEND_URL}/data/${subjectId}/tasks/${id}.json`,
+  );
+  const data = {...response.data, isCompleted: true};
+  // console.log(data);
+  await axios.put(`${BACKEND_URL}/data/${subjectId}/tasks/${id}.json`, data);
+};
+
+const deleteTaskToBackend = (subjectId, id) => {
+  axios.delete(`${BACKEND_URL}/data/${subjectId}/tasks/${id}.json`);
+};
+
+export {
+  storeTask,
+  fetchTasks,
+  storeNewTask,
+  updateTaskToBackend,
+  updateCompletionToBackend,
+  deleteTaskToBackend,
+};

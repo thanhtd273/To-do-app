@@ -1,11 +1,9 @@
-import {useNavigation} from '@react-navigation/native';
 import {CheckBox, Icon} from '@rneui/themed';
-import React, {useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import Colors from '../../utils/Colors';
+import {updateCompletionToBackend} from '../../utils/http';
 import {updateCompletion} from '../redux/tasks';
-import IconButton from './IconButton';
 
 const TaskContentItem = ({
   title,
@@ -16,22 +14,22 @@ const TaskContentItem = ({
   isCompleted,
   onPress,
 }) => {
-  const tasks = useSelector(state => state.tasks.tasks);
+  const {tasks} = useSelector(state => state.tasks);
   const dispatch = useDispatch();
 
-  const [check, setCheck] = useState(false);
   const formatTime = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(deadline));
 
-  const subjectId = tasks.find(item => item.subject === subject).id;
+  const subjId = tasks.find(item => item.subject === subject).id;
   const id = tasks
-    .find(item => item.id === subjectId)
+    .find(item => item.subject === subject)
     .tasks.find(task => task.title === title).id;
-  console.log(id);
-  dispatch(updateCompletion({subjectId: subjectId, id: id}));
-
+  const handlePressingCheckbox = () => {
+    dispatch(updateCompletion({subjectId: subjId, id: id}));
+    updateCompletionToBackend(subjId, id);
+  };
   return (
     <Pressable
       style={({pressed}) => pressed && styles.pressed}
@@ -41,11 +39,11 @@ const TaskContentItem = ({
           <CheckBox
             checked={isCompleted}
             title={title}
-            onPress={() => setCheck(!check)}
+            onPress={handlePressingCheckbox}
             containerStyle={styles.checkbox}
             textStyle={[
               styles.title,
-              check && {textDecorationLine: 'line-through'},
+              isCompleted && {textDecorationLine: 'line-through'},
             ]}
           />
         </View>

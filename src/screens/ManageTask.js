@@ -6,15 +6,18 @@ import {useDispatch, useSelector} from 'react-redux';
 import IconButton from '../components/UI/IconButton';
 import Timing from '../components/UI/Timing';
 import Colors from '../utils/Colors';
-import {addTask, updateCompletion} from '../components/redux/tasks';
+import {addTask, deleteTask, updateCompletion} from '../components/redux/tasks';
 import TitleInput from '../components/ManageTask/TitleInput';
 import Category from '../components/ManageTask/Category';
 import Attachment from '../components/ManageTask/Attachment';
 import {changeSubject} from '../components/redux/subject';
-import {storeNewTask, updateTaskToBackend} from '../utils/http';
+import {
+  deleteTaskToBackend,
+  storeNewTask,
+  updateTaskToBackend,
+} from '../utils/http';
 import {updateTask} from '../components/redux/tasks';
 import {useRef} from 'react';
-import SubjectBar from '../components/SubjectBar';
 
 const ManageTask = ({route, navigation}) => {
   const tasks = useSelector(state => state.tasks.tasks);
@@ -25,6 +28,15 @@ const ManageTask = ({route, navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: isEdditing ? 'Edit Task' : 'New Task',
+      headerRight: () =>
+        isEdditing && (
+          <IconButton
+            icon={'delete'}
+            size={72}
+            color="red"
+            onPress={handleDeletion}
+          />
+        ),
     });
   }, [navigation, isEdditing]);
 
@@ -100,12 +112,17 @@ const ManageTask = ({route, navigation}) => {
       );
       updateTaskToBackend(input.subjectId, edittedTaskId, input.data);
       dispatch(updateCompletion({subjectId: edittedSubjId, id: edittedTaskId}));
-      console.log(tasks);
     } else {
       storeNewTask(input.subjectId, input.data);
       dispatch(addTask(input));
     }
 
+    navigation.goBack();
+  };
+  const handleDeletion = () => {
+    console.log('Deletion');
+    deleteTaskToBackend(edittedSubjId, edittedTaskId);
+    dispatch(deleteTask({id: edittedTaskId, subjectId: edittedSubjId}));
     navigation.goBack();
   };
   return (
@@ -147,6 +164,7 @@ const ManageTask = ({route, navigation}) => {
             time={formatDate(reminder)}
           />
         </View>
+
         <View style={styles.buttonContainer}>
           <IconButton
             text={isEdditing ? 'UPDATE TASK' : 'ADD TASK'}

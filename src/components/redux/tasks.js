@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, current} from '@reduxjs/toolkit';
 
 import {SUBJECTS} from '../../utils/data';
 
@@ -12,7 +12,6 @@ const tasksSlice = createSlice({
       state.tasks = action.payload.tasks;
     },
     addTask: (state, action) => {
-      console.log('action.payload: ', action.payload);
       const indexBySubject = state.tasks.findIndex(
         item => item.subject === action.payload.subject,
       );
@@ -44,12 +43,14 @@ const tasksSlice = createSlice({
       }
     },
     deleteTask: (state, action) => {
-      let deletedTaskArray = [
-        ...state.tasks.find(item => item.id === action.payload.subjectId).tasks,
-      ];
-      deletedTaskArray = deletedTaskArray.filter(
-        item => item.id !== action.payload.id,
+      const data = [...state.tasks];
+      const tasks = data.find(
+        item => item.id === action.payload.subjectId,
+      ).tasks;
+      const deletedItemIndex = tasks.findIndex(
+        task => task.id === action.payload.id,
       );
+      tasks.splice(deletedItemIndex, 1);
     },
     updateTask: (state, action) => {
       const tasksState = [...state.tasks];
@@ -72,7 +73,6 @@ const tasksSlice = createSlice({
         .find(item => item.id === action.payload.subjectId)
         .tasks.find(task => task.id === action.payload.id);
 
-      // console.log(new Date(updatedTask.deadline) < today);
       if (new Date(updatedTask.deadline) < today)
         updatedTask.isCompleted = true;
     },
