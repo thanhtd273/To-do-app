@@ -6,19 +6,19 @@ import {useDispatch, useSelector} from 'react-redux';
 import {changeSubject} from '../redux/subject';
 import Colors from '../../utils/Colors';
 
-const SubjectItem = ({icon, color, subject, style}) => {
-  const dispatch = useDispatch();
+const SubjectItem = ({subject, style, onPress}) => {
+  // const dispatch = useDispatch();
   const handlePressSubjectButton = () => {
-    dispatch(changeSubject({subject: subject}));
+    // dispatch(changeSubject({subject: subject}));
   };
 
   return (
-    <Pressable
-      style={[styles.container, style]}
-      onPress={handlePressSubjectButton}>
+    <Pressable style={[styles.container, style]} onPress={onPress}>
       <View style={styles.subject}>
-        {icon && <Icon name={icon} size={20} color={color} />}
-        <Text style={styles.text}>{subject}</Text>
+        {subject.icon && (
+          <Icon name={subject.icon} size={20} color={subject.color} />
+        )}
+        <Text style={styles.text}>{subject.name}</Text>
       </View>
     </Pressable>
   );

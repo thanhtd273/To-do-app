@@ -7,7 +7,7 @@ import {Provider, useDispatch} from 'react-redux';
 
 import TasksOverviewScreen from './src/screens/TasksOverviewScreen';
 import TaskEditionScreen from './src/screens/TaskEditionScreen';
-import {store} from './src/components/redux/store';
+import {store} from './src/reducers/store';
 import ManageTask from './src/screens/ManageTask';
 
 const Stack = createStackNavigator();

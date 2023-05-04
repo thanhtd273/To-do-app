@@ -8,11 +8,17 @@ import {SUBJECTS} from '../../utils/data';
 import {changeSubject} from '../redux/subject';
 import SubjectBar from '../SubjectBar';
 
-const Category = ({onPress}) => {
+const Category = ({onPress, category}) => {
   return (
     <View style={styles.categoryContainer}>
       <Text style={styles.title}>Choose category</Text>
-      <SubjectBar isContainedAll={false} />
+      <SubjectBar
+        focusedCategory={category}
+        isContainedAll={false}
+        onPress={name => {
+          onPress(name);
+        }}
+      />
     </View>
   );
 };

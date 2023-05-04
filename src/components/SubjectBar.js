@@ -1,35 +1,77 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
 
 import Colors from '../utils/Colors';
-import {DATA} from '../utils/data';
 import SubjectItem from './UI/SubjectItem';
-import {changeSubject} from './redux/subject';
+import {getCategories} from '../utils/functions/communicateDatabase';
 
-const SubjectBar = ({isContainedAll}) => {
-  const subjectState = useSelector(state => state.subject);
+const CATEGORIES = [
+  {
+    name: 'Work',
+    icon: 'monitor',
+    color: '#34fc7a',
+  },
+  {
+    name: 'Study',
+    icon: 'school',
+    color: '#fcaa46',
+  },
+  {
+    name: 'Sport',
+    icon: 'sports-football',
+    color: '#6e83de',
+  },
+  {
+    name: 'Friend',
+    icon: 'people',
+    color: '#cc9299',
+  },
+  {
+    name: 'Others',
+    icon: 'dynamic-feed',
+    color: '#b9c3cb',
+  },
+];
 
+const SubjectBar = ({
+  isAll = false,
+  focusedCategory = 'All',
+  onPress,
+  containerStyle,
+}) => {
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    getCategories().then(response => {
+      setCategories(response.reverse());
+    });
+  }, []);
+  // console.log(focusedCategory);
   return (
-    <ScrollView contentContainerStyle={styles.container} horizontal={true}>
-      {isContainedAll && (
+    <ScrollView
+      contentContainerStyle={[styles.container, containerStyle]}
+      horizontal={true}>
+      {isAll && (
         <SubjectItem
-          subject="All"
+          subject={{name: 'All', icon: '', color: ''}}
+          onPress={() => {
+            onPress('All');
+          }}
           style={
-            (subjectState === 'All' || subjectState.subject === 'All') && {
+            focusedCategory === 'All' && {
               backgroundColor: Colors.bluePurple,
             }
           }
         />
       )}
-      {DATA.map((item, index) => (
+      {categories.map((item, i) => (
         <SubjectItem
-          key={index}
-          icon={item.icon}
-          subject={item.subject}
-          color={item.iconColor}
+          key={i}
+          subject={item}
+          onPress={() => {
+            onPress(item.name);
+          }}
           style={
-            subjectState === item.subject && {
+            focusedCategory === item.name && {
               backgroundColor: Colors.bluePurple,
             }
           }

@@ -8,28 +8,25 @@ import {updateCompletion} from '../redux/tasks';
 const TaskContentItem = ({
   title,
   deadline,
-  subjectIcon,
-  subjectIconColor,
-  subject,
-  isCompleted,
+  icon,
+  color,
+  category,
+  status,
   onPress,
 }) => {
-  const {tasks} = useSelector(state => state.tasks);
-  const dispatch = useDispatch();
-
   const formatTime = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(deadline));
 
-  const subjId = tasks.find(item => item.subject === subject).id;
-  const id = tasks
-    .find(item => item.subject === subject)
-    .tasks.find(task => task.title === title).id;
-  const handlePressingCheckbox = () => {
-    dispatch(updateCompletion({subjectId: subjId, id: id}));
-    updateCompletionToBackend(subjId, id);
-  };
+  // const subjId = tasks.find(item => item.subject === subject).id;
+  // const id = tasks
+  //   .find(item => item.subject === subject)
+  //   .tasks.find(task => task.title === title).id;
+  // const handlePressingCheckbox = () => {
+  //   dispatch(updateCompletion({subjectId: subjId, id: id}));
+  //   updateCompletionToBackend(subjId, id);
+  // };
   return (
     <Pressable
       style={({pressed}) => pressed && styles.pressed}
@@ -37,13 +34,12 @@ const TaskContentItem = ({
       <View style={styles.container}>
         <View style={styles.abovePart}>
           <CheckBox
-            checked={isCompleted}
+            checked={status === 'done'}
             title={title}
-            onPress={handlePressingCheckbox}
             containerStyle={styles.checkbox}
             textStyle={[
               styles.title,
-              isCompleted && {textDecorationLine: 'line-through'},
+              status === 'done' && {textDecorationLine: 'line-through'},
             ]}
           />
         </View>
@@ -55,8 +51,8 @@ const TaskContentItem = ({
             <Icon name="alarm" color={'#64668c'} />
           </View>
           <View style={styles.bottomLeftPart}>
-            <Icon name={subjectIcon} color={subjectIconColor} size={24} />
-            <Text style={styles.timeText}>{subject}</Text>
+            <Icon name={icon} color={color} size={24} />
+            <Text style={styles.timeText}>{category}</Text>
           </View>
         </View>
       </View>
@@ -69,7 +65,6 @@ export default TaskContentItem;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 12,
     marginVertical: 6,
     backgroundColor: '#121230',
     borderRadius: 12,

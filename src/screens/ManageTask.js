@@ -1,35 +1,32 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {useDispatch, useSelector} from 'react-redux';
 
 import IconButton from '../components/UI/IconButton';
 import Timing from '../components/UI/Timing';
 import Colors from '../utils/Colors';
-import {addTask, deleteTask, updateCompletion} from '../components/redux/tasks';
 import TitleInput from '../components/ManageTask/TitleInput';
 import Category from '../components/ManageTask/Category';
 import Attachment from '../components/ManageTask/Attachment';
-import {changeSubject} from '../components/redux/subject';
 import {
+  createNewTaskToBackend,
   deleteTaskToBackend,
-  storeNewTask,
+  getCategory,
   updateTaskToBackend,
-} from '../utils/http';
-import {updateTask} from '../components/redux/tasks';
-import {useRef} from 'react';
+} from '../utils/functions/communicateDatabase';
+import {useDispatch} from 'react-redux';
+import {addTask, deleteTask, updateTask} from '../reducers/task';
 
 const ManageTask = ({route, navigation}) => {
-  const tasks = useSelector(state => state.tasks.tasks);
-  const subject = useSelector(state => state.subject);
   const dispatch = useDispatch();
+
   const [isOpenDate, setOpenDate] = useState(false);
   const [isOpenReminder, setOpenReminder] = useState(false);
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: isEdditing ? 'Edit Task' : 'New Task',
+      title: isEditing ? 'Edit Task' : 'New Task',
       headerRight: () =>
-        isEdditing && (
+        isEditing && (
           <IconButton
             icon={'delete'}
             size={72}
@@ -38,27 +35,21 @@ const ManageTask = ({route, navigation}) => {
           />
         ),
     });
-  }, [navigation, isEdditing]);
-
-  const edittedTaskId = route.params?.id;
-  const edittedSubjId = route.params?.subjectId;
-  const isEdditing = !!edittedTaskId;
-
-  let edittedTask = {};
-  for (const item of tasks) {
-    for (const task of item?.tasks) {
-      if (task.id === edittedTaskId)
-        edittedTask = {...task, subjectId: item.id};
-    }
-  }
-  const title = useRef(isEdditing ? edittedTask.title : '');
-  const inputChangeHandler = text => {
-    title.current = text;
-  };
-
+  }, [navigation, isEditing]);
   const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [reminder, setReminder] = useState(today);
+
+  const userID = route.params?.userID;
+  const edittedTaskId = route.params?.id;
+  const isEditing = !!edittedTaskId;
+  const editedTask = route.params?.data;
+
+  const [inputs, setInputs] = useState({
+    title: isEditing ? editedTask.title : '',
+    category: isEditing ? editedTask.category : '',
+    deadline: isEditing ? editedTask.deadline : today.toISOString(),
+    reminder: isEditing ? editedTask.reminder : today.toISOString(),
+    status: isEditing ? editedTask.status : 'doing',
+  });
 
   const formatDate = date => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -69,60 +60,32 @@ const ManageTask = ({route, navigation}) => {
       minute: '2-digit',
     }).format(date);
   };
-  useEffect(() => {
-    if (isEdditing) {
-      const edittedDate = new Date(edittedTask.deadline);
-      const edittedReminder = new Date(edittedTask.reminder);
-      setSelectedDate(edittedDate);
-      setReminder(edittedReminder);
-    }
-  }, []);
 
-  const handleSettingDate = date => {
+  const setDealine = date => {
     setOpenDate(false);
-    setSelectedDate(date);
+    setInputs({...inputs, deadline: date.toISOString()});
   };
 
-  const handleSettingReminder = date => {
+  const setRemider = date => {
     setOpenReminder(false);
-    setReminder(date);
+    setInputs({...inputs, reminder: date.toISOString()});
   };
 
-  const handleConfirm = () => {
-    const input = {
-      subjectId: isEdditing
-        ? edittedSubjId
-        : tasks.find(item => item.subject === subject).id,
-      subject: subject,
-      data: {
-        title: title.current,
-        deadline: selectedDate.toString(),
-        reminder: isEdditing ? reminder.toString() : reminder.toString(),
-        isCompleted: false,
-      },
-    };
-    // console.log(tasks);
-    if (isEdditing) {
-      dispatch(
-        updateTask({
-          id: edittedTaskId,
-          subjectId: edittedSubjId,
-          data: input.data,
-        }),
-      );
-      updateTaskToBackend(input.subjectId, edittedTaskId, input.data);
-      dispatch(updateCompletion({subjectId: edittedSubjId, id: edittedTaskId}));
+  const handleConfirm = async () => {
+    const {icon, color} = await getCategory(inputs.category);
+    if (isEditing) {
+      updateTaskToBackend({userID: userID, id: edittedTaskId, data: inputs});
+      dispatch(updateTask({id: edittedTaskId, data: {...inputs, icon, color}}));
     } else {
-      storeNewTask(input.subjectId, input.data);
-      dispatch(addTask(input));
+      const id = await createNewTaskToBackend({userID: userID, data: inputs});
+      dispatch(addTask({id, data: {...inputs, icon, color}}));
     }
 
     navigation.goBack();
   };
   const handleDeletion = () => {
-    console.log('Deletion');
-    deleteTaskToBackend(edittedSubjId, edittedTaskId);
-    dispatch(deleteTask({id: edittedTaskId, subjectId: edittedSubjId}));
+    deleteTaskToBackend({userID, id: edittedTaskId});
+    dispatch(deleteTask({id: edittedTaskId}));
     navigation.goBack();
   };
   return (
@@ -130,44 +93,50 @@ const ManageTask = ({route, navigation}) => {
       <DatePicker
         modal
         mode="datetime"
-        date={selectedDate}
+        date={isEditing ? new Date(editedTask.deadline) : today}
         open={isOpenDate}
-        onConfirm={handleSettingDate}
+        onConfirm={setDealine}
         onCancel={() => setOpenDate(false)}
       />
       <DatePicker
         modal
         mode="datetime"
-        date={reminder}
+        date={isEditing ? new Date(editedTask.reminder) : today}
         open={isOpenReminder}
-        onConfirm={handleSettingReminder}
+        onConfirm={setRemider}
         onCancel={() => setOpenReminder(false)}
       />
       <View style={[styles.container]}>
         <TitleInput
           textInputConfig={{
-            onChangeText: inputChangeHandler.bind(this),
-            defaultValue: isEdditing ? edittedTask.title : '',
+            onChangeText: text => setInputs({...inputs, title: text}),
+            defaultValue: isEditing ? editedTask.title : '',
           }}
         />
-        <Category />
+        <Category
+          category={inputs.category}
+          onPress={name => {
+            // console.log(name);
+            setInputs({...inputs, category: name});
+          }}
+        />
         <Attachment />
         <View style={styles.timeContainer}>
           <Timing
             title="Set Due Date"
             onPress={() => setOpenDate(true)}
-            time={formatDate(selectedDate)}
+            time={formatDate(new Date(inputs.deadline))}
           />
           <Timing
             title="Set Reminder"
             onPress={() => setOpenReminder(true)}
-            time={formatDate(reminder)}
+            time={formatDate(new Date(inputs.reminder))}
           />
         </View>
 
         <View style={styles.buttonContainer}>
           <IconButton
-            text={isEdditing ? 'UPDATE TASK' : 'ADD TASK'}
+            text={isEditing ? 'UPDATE TASK' : 'ADD TASK'}
             size={96}
             style={styles.button}
             onPress={handleConfirm}

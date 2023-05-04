@@ -1,30 +1,27 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
+import axios from 'axios';
+
 import Colors from '../utils/Colors';
 import AddButton from './AddButton';
-import IconButton from './UI/IconButton';
+import {databaseURL} from '../utils/server/URL';
 
 const Footer = () => {
   const navigation = useNavigation();
+  const [userID, setUserID] = useState('');
+  useEffect(() => {
+    axios.get(`${databaseURL}/users`).then(response => {
+      const id = response.data.documents[0].name.split('/').at(-1);
+      setUserID(id);
+    });
+  }, []);
   const handlePressAddButton = () => {
-    navigation.navigate('ManageTask');
+    navigation.navigate('ManageTask', {userID});
   };
   return (
     <View style={styles.container}>
-      <IconButton
-        icon="view-list"
-        size={84}
-        color="#48497b"
-        style={styles.pressedView}
-      />
       <AddButton onPress={handlePressAddButton} />
-      <IconButton
-        icon="view-module"
-        size={84}
-        color="#48497b"
-        style={styles.pressedView}
-      />
     </View>
   );
 };

@@ -14,7 +14,6 @@ const Header = () => {
           style={styles.input}
           placeholder="Search"
           placeholderTextColor="#48497b"
-          // onSubmitEditing={({nativeEvent}) => console.log(nativeEvent.text)}
         />
         <IconButton
           icon="calendar-today"
@@ -23,7 +22,6 @@ const Header = () => {
           style={styles.pressedCalendar}
         />
       </View>
-      <SubjectBar isContainedAll={true} />
     </View>
   );
 };
@@ -32,7 +30,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.2,
+    flex: 0.1,
   },
   topStyle: {
     flexDirection: 'row',
