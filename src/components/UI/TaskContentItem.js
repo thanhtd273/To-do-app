@@ -1,32 +1,59 @@
 import {CheckBox, Icon} from '@rneui/themed';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {updateCompletionToBackend} from '../../utils/http';
-import {updateCompletion} from '../redux/tasks';
+import {updateTaskStatus} from '../../reducers/task';
+import {updateTaskToBackend} from '../../utils/functions/communicateDatabase';
 
-const TaskContentItem = ({
-  title,
-  deadline,
-  icon,
-  color,
-  category,
-  status,
-  onPress,
-}) => {
+const TaskContentItem = ({task, onPress}) => {
+  const {user} = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const [isCompleted, setCompleted] = useState(
+    task.data.status === 'done' ||
+      new Date(task.data.deadline) - new Date() < 0,
+  );
+
+  // Automatic update status if deadline passed
+  useEffect(() => {
+    if (new Date(task.data.deadline) - new Date() < 0) {
+      dispatch(updateTaskStatus({id: task.id}));
+      updateTaskToBackend({
+        userID: user.id,
+        id: task.id,
+        data: {
+          title: task.data.title,
+          deadline: task.data.deadline,
+          reminder: task.data.reminder,
+          category: task.data.category,
+          status: 'done',
+        },
+      });
+      setCompleted(true);
+    }
+  }, []);
+  const toggleTaskStatus = () => {
+    if (new Date(task.data.deadline) - new Date() > 0) {
+      dispatch(updateTaskStatus({id: task.id}));
+      updateTaskToBackend({
+        userID: user.id,
+        id: task.id,
+        data: {
+          title: task.data.title,
+          deadline: task.data.deadline,
+          reminder: task.data.reminder,
+          category: task.data.category,
+          status: isCompleted ? 'doing' : 'done',
+        },
+      });
+      setCompleted(!isCompleted);
+    }
+  };
+
   const formatTime = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-  }).format(new Date(deadline));
+  }).format(new Date(task.data.deadline));
 
-  // const subjId = tasks.find(item => item.subject === subject).id;
-  // const id = tasks
-  //   .find(item => item.subject === subject)
-  //   .tasks.find(task => task.title === title).id;
-  // const handlePressingCheckbox = () => {
-  //   dispatch(updateCompletion({subjectId: subjId, id: id}));
-  //   updateCompletionToBackend(subjId, id);
-  // };
   return (
     <Pressable
       style={({pressed}) => pressed && styles.pressed}
@@ -34,13 +61,16 @@ const TaskContentItem = ({
       <View style={styles.container}>
         <View style={styles.abovePart}>
           <CheckBox
-            checked={status === 'done'}
-            title={title}
+            checked={isCompleted}
+            title={task.data.title}
             containerStyle={styles.checkbox}
             textStyle={[
               styles.title,
-              status === 'done' && {textDecorationLine: 'line-through'},
+              isCompleted && {
+                textDecorationLine: 'line-through',
+              },
             ]}
+            onPress={toggleTaskStatus}
           />
         </View>
 
@@ -51,8 +81,8 @@ const TaskContentItem = ({
             <Icon name="alarm" color={'#64668c'} />
           </View>
           <View style={styles.bottomLeftPart}>
-            <Icon name={icon} color={color} size={24} />
-            <Text style={styles.timeText}>{category}</Text>
+            <Icon name={task.data.icon} color={task.data.color} size={24} />
+            <Text style={styles.timeText}>{task.data.category}</Text>
           </View>
         </View>
       </View>

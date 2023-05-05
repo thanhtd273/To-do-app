@@ -88,6 +88,7 @@ const updateTaskToBackend = ({userID, id, data}) => {
     formatTaskToFirebaseForm(data),
   );
 };
+
 const createNewTaskToBackend = async ({userID, data}) => {
   const response = await axios.post(
     `${databaseURL}/users/${userID}/tasks`,

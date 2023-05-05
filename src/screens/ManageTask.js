@@ -14,10 +14,11 @@ import {
   getCategory,
   updateTaskToBackend,
 } from '../utils/functions/communicateDatabase';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {addTask, deleteTask, updateTask} from '../reducers/task';
 
 const ManageTask = ({route, navigation}) => {
+  const {user} = useSelector(state => state.user);
   const dispatch = useDispatch();
 
   const [isOpenDate, setOpenDate] = useState(false);
@@ -38,7 +39,6 @@ const ManageTask = ({route, navigation}) => {
   }, [navigation, isEditing]);
   const today = new Date();
 
-  const userID = route.params?.userID;
   const edittedTaskId = route.params?.id;
   const isEditing = !!edittedTaskId;
   const editedTask = route.params?.data;
@@ -74,17 +74,17 @@ const ManageTask = ({route, navigation}) => {
   const handleConfirm = async () => {
     const {icon, color} = await getCategory(inputs.category);
     if (isEditing) {
-      updateTaskToBackend({userID: userID, id: edittedTaskId, data: inputs});
+      updateTaskToBackend({userID: user.id, id: edittedTaskId, data: inputs});
       dispatch(updateTask({id: edittedTaskId, data: {...inputs, icon, color}}));
     } else {
-      const id = await createNewTaskToBackend({userID: userID, data: inputs});
+      const id = await createNewTaskToBackend({userID: user.id, data: inputs});
       dispatch(addTask({id, data: {...inputs, icon, color}}));
     }
 
     navigation.goBack();
   };
   const handleDeletion = () => {
-    deleteTaskToBackend({userID, id: edittedTaskId});
+    deleteTaskToBackend({userID: user.id, id: edittedTaskId});
     dispatch(deleteTask({id: edittedTaskId}));
     navigation.goBack();
   };

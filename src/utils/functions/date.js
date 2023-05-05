@@ -7,13 +7,16 @@ export const formateDate = value => {
   });
   if (calculateDayLeft(date) === 0) return formated && `Today, ${formated}`;
   else if (calculateDayLeft(date) === 1) return `Tommorow, ${formated}`;
+  else if (calculateDayLeft(date) === -1) return `Yesterday, ${formated}`;
+  else if (calculateDayLeft(date) < -1)
+    return `${-calculateDayLeft(date)} days passed, ${formated}`;
   return `${calculateDayLeft(date)} days left, ${formated}`;
 };
 
 export const calculateDayLeft = value => {
   const date = new Date(value);
   const today = new Date();
-  return Math.floor((date - today) / (24 * 60 * 60 * 1000));
+  return Math.floor((date - today) / (24 * 60 * 60 * 1000)) + 1;
 };
 
 export const sortTasksByDayLeft = tasks => {
@@ -33,21 +36,21 @@ export const sortTasksByDayLeft = tasks => {
     target[j + 1] = key;
   }
   const result = [];
+
   target.forEach(item => {
     const index = result.findIndex(
       element =>
         calculateDayLeft(element.date) === calculateDayLeft(item.data.deadline),
     );
     if (index === -1) {
-      const date = item.data.deadline.substring(
-        0,
-        item.data.deadline.indexOf('T'),
-      );
-      result.push({date, data: [item]});
+      result.push({date: item.data.deadline, data: [item]});
     } else {
       result[index].data.push(item);
     }
   });
-
+  const lastNegativeItemIndex =
+    result.findIndex(item => calculateDayLeft(item.date) >= 0) - 1;
+  const buffer = result.splice(0, lastNegativeItemIndex + 1);
+  result.push(...buffer);
   return result;
 };

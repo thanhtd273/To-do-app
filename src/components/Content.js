@@ -13,19 +13,27 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {setTasks} from '../reducers/task';
 import {formateDate, sortTasksByDayLeft} from '../utils/functions/date';
+import {setUser} from '../reducers/user';
+import {formatUserToUsable} from '../utils/functions/formatData';
 
 const Content = () => {
   const navigation = useNavigation();
   const {tasks} = useSelector(state => state.tasks);
+  const {user} = useSelector(state => state.user);
   const dispatch = useDispatch();
+
   const [category, setCategory] = useState('All');
-  const [userID, setUserID] = useState('');
 
   useEffect(() => {
     setCategory('All');
     axios.get(`${databaseURL}/users`).then(response => {
       const id = response.data.documents[0].name.split('/').at(-1);
-      setUserID(id);
+      dispatch(
+        setUser({
+          id,
+          data: formatUserToUsable(response.data.documents[0].fields),
+        }),
+      );
       getTasks(id).then(res => {
         dispatch(setTasks(res));
       });
@@ -34,31 +42,19 @@ const Content = () => {
 
   const filterByCategory = async category => {
     if (category === 'All') {
-      axios.get(`${databaseURL}/users`).then(response => {
-        const id = response.data.documents[0].name.split('/').at(-1);
-        setUserID(id);
-        getTasks(id).then(res => {
-          dispatch(setTasks(res));
-        });
-      });
+      const res = await getTasks(user.id);
+      dispatch(setTasks(res));
     } else {
-      const response = await getTasksByCategory(category, userID);
+      const response = await getTasksByCategory(category, user.id);
       dispatch(setTasks(response));
     }
   };
   const renderTaskItem = ({item}) => {
     return (
       <TaskContentItem
-        id={item.id}
-        title={item.data.title}
-        deadline={item.data.deadline}
-        category={item.data.category}
-        icon={item.data.icon}
-        color={item.data.color}
-        status={item.data.status}
+        task={item}
         onPress={() => {
           navigation.navigate('ManageTask', {
-            userID: userID,
             id: item.id,
             data: item.data,
           });

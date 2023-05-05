@@ -12,6 +12,22 @@ const formatType = value => {
   return {[`${typeof value}Value`]: value};
 };
 
+const formatUserToUsable = user => {
+  const name = user.name.stringValue;
+  const birthday = user.birthday.timestampValue;
+  const email = user.email.stringValue;
+  return {name, birthday, email};
+};
+const formatUserToFirbaseForm = user => {
+  return {
+    fields: {
+      name: formatType(user.name),
+      birthday: formatType(user.birthday),
+      email: formatType(user.email),
+    },
+  };
+};
+
 const formatCategoryToUsable = category => {
   const name = category.name.stringValue;
   const icon = category.icon.stringValue;
@@ -50,6 +66,8 @@ const formatTaskToFirebaseForm = task => {
 };
 
 export {
+  formatUserToUsable,
+  formatUserToFirbaseForm,
   formatType,
   formatCategoryToUsable,
   formatCategoryToFirebaseForm,
