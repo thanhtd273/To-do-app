@@ -72,19 +72,32 @@ const ManageTask = ({route, navigation}) => {
   };
 
   const handleConfirm = async () => {
-    const {icon, color} = await getCategory(inputs.category);
+    const {icon, color} = await getCategory(inputs.category, user.token);
     if (isEditing) {
-      updateTaskToBackend({userID: user.id, id: edittedTaskId, data: inputs});
+      updateTaskToBackend({
+        userID: user.id,
+        id: edittedTaskId,
+        data: inputs,
+        token: user.token,
+      });
       dispatch(updateTask({id: edittedTaskId, data: {...inputs, icon, color}}));
     } else {
-      const id = await createNewTaskToBackend({userID: user.id, data: inputs});
+      const id = await createNewTaskToBackend({
+        userID: user.id,
+        data: inputs,
+        token: user.token,
+      });
       dispatch(addTask({id, data: {...inputs, icon, color}}));
     }
 
     navigation.goBack();
   };
   const handleDeletion = () => {
-    deleteTaskToBackend({userID: user.id, id: edittedTaskId});
+    deleteTaskToBackend({
+      userID: user.id,
+      id: edittedTaskId,
+      token: user.token,
+    });
     dispatch(deleteTask({id: edittedTaskId}));
     navigation.goBack();
   };

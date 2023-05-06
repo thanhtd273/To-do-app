@@ -10,6 +10,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.18.1",
+    "@react-native-firebase/app": "^17.4.3",
+    "@react-native-firebase/messaging": "^17.4.3",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/material-top-tabs": "^6.6.2",
     "@react-navigation/native": "^6.0.13",
@@ -20,6 +23,7 @@
     "axios": "0.26.0",
     "react": "18.1.0",
     "react-native": "0.70.6",
+    "react-native-background-timer": "^2.4.1",
     "react-native-calendars": "^1.1291.1",
     "react-native-date-picker": "^4.2.6",
     "react-native-gesture-handler": "^2.8.0",

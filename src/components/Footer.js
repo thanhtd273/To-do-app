@@ -1,27 +1,46 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Colors from '../utils/Colors';
 import AddButton from './AddButton';
-import {databaseURL} from '../utils/server/URL';
+import IconButton from './UI/IconButton';
+import {pushNotification} from '../services/notification/pushNotification';
+import {removeUser} from '../reducers/user';
 
 const Footer = () => {
+  const {user} = useSelector(state => state.user);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [userID, setUserID] = useState('');
-  useEffect(() => {
-    axios.get(`${databaseURL}/users`).then(response => {
-      const id = response.data.documents[0].name.split('/').at(-1);
-      setUserID(id);
-    });
-  }, []);
+
+  useEffect(() => {}, []);
+
   const handlePressAddButton = () => {
-    navigation.navigate('ManageTask', {userID});
+    navigation.navigate('ManageTask', {userID: user.id});
+  };
+  const logout = () => {
+    dispatch(removeUser());
   };
   return (
     <View style={styles.container}>
+      <IconButton
+        icon="add"
+        size={72}
+        color="black"
+        style={{width: 50, height: 50, backgroundColor: Colors.bluePurple}}
+        onPress={() => {
+          pushNotification();
+        }}
+      />
       <AddButton onPress={handlePressAddButton} />
+      <IconButton
+        icon="logout"
+        size={72}
+        color="red"
+        style={{width: 50, height: 50}}
+        onPress={logout}
+      />
     </View>
   );
 };

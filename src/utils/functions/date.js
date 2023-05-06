@@ -16,7 +16,7 @@ export const formateDate = value => {
 export const calculateDayLeft = value => {
   const date = new Date(value);
   const today = new Date();
-  return Math.floor((date - today) / (24 * 60 * 60 * 1000)) + 1;
+  return Math.floor((date - today) / (24 * 60 * 60 * 1000));
 };
 
 export const sortTasksByDayLeft = tasks => {

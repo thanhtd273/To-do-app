@@ -27,6 +27,7 @@ const TaskContentItem = ({task, onPress}) => {
           category: task.data.category,
           status: 'done',
         },
+        token: user.token,
       });
       setCompleted(true);
     }
@@ -44,6 +45,7 @@ const TaskContentItem = ({task, onPress}) => {
           category: task.data.category,
           status: isCompleted ? 'doing' : 'done',
         },
+        token: user.token,
       });
       setCompleted(!isCompleted);
     }

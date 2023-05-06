@@ -4,6 +4,7 @@ import {ScrollView, StyleSheet} from 'react-native';
 import Colors from '../utils/Colors';
 import SubjectItem from './UI/SubjectItem';
 import {getCategories} from '../utils/functions/communicateDatabase';
+import {useSelector} from 'react-redux';
 
 const CATEGORIES = [
   {
@@ -39,9 +40,10 @@ const SubjectBar = ({
   onPress,
   containerStyle,
 }) => {
+  const {user} = useSelector(state => state.user);
   const [categories, setCategories] = useState([]);
   useEffect(() => {
-    getCategories().then(response => {
+    getCategories(user.token).then(response => {
       setCategories(response.reverse());
     });
   }, []);

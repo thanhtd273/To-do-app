@@ -14,16 +14,15 @@ const formatType = value => {
 
 const formatUserToUsable = user => {
   const name = user.name.stringValue;
-  const birthday = user.birthday.timestampValue;
+
   const email = user.email.stringValue;
-  return {name, birthday, email};
+  return {name, email};
 };
-const formatUserToFirbaseForm = user => {
+const formatUserToFirbaseForm = ({name, email}) => {
   return {
     fields: {
-      name: formatType(user.name),
-      birthday: formatType(user.birthday),
-      email: formatType(user.email),
+      name: formatType(name),
+      email: formatType(email),
     },
   };
 };

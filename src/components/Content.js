@@ -1,21 +1,23 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {SectionList, StyleSheet, Text, View} from 'react-native';
-import axios from 'axios';
 
 import TaskContentItem from './UI/TaskContentItem';
 import SubjectBar from './SubjectBar';
-import {databaseURL} from '../utils/server/URL';
 import {
   getTasks,
   getTasksByCategory,
+  getUserByEmail,
 } from '../utils/functions/communicateDatabase';
 import {useDispatch, useSelector} from 'react-redux';
 import {setTasks} from '../reducers/task';
 import {formateDate, sortTasksByDayLeft} from '../utils/functions/date';
 import {setUser} from '../reducers/user';
-import {formatUserToUsable} from '../utils/functions/formatData';
-
+import {
+  NotificationListener,
+  getFCMToken,
+  requestUserPermission,
+} from '../services/notification/configueNotification';
 const Content = () => {
   const navigation = useNavigation();
   const {tasks} = useSelector(state => state.tasks);
@@ -25,28 +27,41 @@ const Content = () => {
   const [category, setCategory] = useState('All');
 
   useEffect(() => {
-    setCategory('All');
-    axios.get(`${databaseURL}/users`).then(response => {
-      const id = response.data.documents[0].name.split('/').at(-1);
-      dispatch(
-        setUser({
-          id,
-          data: formatUserToUsable(response.data.documents[0].fields),
-        }),
-      );
-      getTasks(id).then(res => {
-        dispatch(setTasks(res));
-      });
-    });
+    getFCMToken();
+    requestUserPermission();
+    NotificationListener();
   }, []);
 
+  useEffect(() => {
+    getUserByEmail(user.data.email, user.token)
+      .then(res => {
+        dispatch(setUser({token: user.token, id: res.id, data: res.data}));
+      })
+      .catch(err => console.log(err));
+
+    setCategory('All');
+  }, []);
+  useEffect(() => {
+    if (user.id)
+      getTasks(user.id, user.token).then(res => dispatch(setTasks(res)));
+  }, [user.id]);
+
   const filterByCategory = async category => {
-    if (category === 'All') {
-      const res = await getTasks(user.id);
-      dispatch(setTasks(res));
-    } else {
-      const response = await getTasksByCategory(category, user.id);
-      dispatch(setTasks(response));
+    try {
+      if (category === 'All') {
+        const res = await getTasks(user.id, user.token);
+        dispatch(setTasks(res));
+      } else {
+        const response = await getTasksByCategory(
+          category,
+          user.id,
+          user.token,
+        );
+        dispatch(setTasks(response));
+      }
+    } catch (error) {
+      console.log('Error from querying all tasks');
+      console.log(error);
     }
   };
   const renderTaskItem = ({item}) => {
