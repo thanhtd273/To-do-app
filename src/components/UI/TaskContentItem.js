@@ -17,7 +17,7 @@ const TaskContentItem = ({task, onPress}) => {
 
   // Automatic update status if deadline passed
   useEffect(() => {
-    if (new Date(task.data.deadline) - new Date() < 0) {
+    if (new Date(task.data.deadline) < new Date()) {
       dispatch(updateTaskStatus({id: task.id}));
       updateTaskToBackend({
         userID: user.id,

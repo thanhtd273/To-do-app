@@ -65,7 +65,11 @@ const getUserByEmail = async (email, token) => {
       },
     );
     const id = response.data[0].document.name.split('/')[6];
-    return {id, data: formatUserToUsable(response.data[0].document.fields)};
+
+    return {
+      id,
+      data: formatUserToUsable(response.data[0].document.fields),
+    };
   } catch (error) {
     console.log('Error from getUserByEmail: ', error);
   }
@@ -117,9 +121,13 @@ const getTasks = async (userID, token) => {
       const result = await Promise.all(
         response.data.documents.map(async item => {
           const id = item.name.split('/')[8];
+
           const category = item.fields.category.stringValue;
           const {icon, color} = await getCategory(category, token);
-          return {id, data: {...formatTaskToUsable(item.fields), icon, color}};
+          return {
+            id,
+            data: {...formatTaskToUsable(item.fields), icon, color},
+          };
         }),
       );
 
@@ -148,7 +156,7 @@ const getTasksByCategory = async (category, userID, token) => {
     if (Object.keys(response.data).length) {
       const result = await Promise.all(
         response.data.map(async item => {
-          const id = item.document.name.split('/')[6];
+          const id = item.document.name.split('/')[8];
           const {icon, color} = await getCategory(category, token);
           return {
             id,
@@ -188,7 +196,7 @@ const createNewTaskToBackend = async ({userID, data, token}) => {
         },
       },
     );
-    const id = response.data.name.split('/')[6];
+    const id = response.data.name.split('/')[8];
     return id;
   } catch (error) {
     console.log('Error from createNewTaskToBackend');

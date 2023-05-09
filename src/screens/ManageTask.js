@@ -123,6 +123,7 @@ const ManageTask = ({route, navigation}) => {
       try {
         const {icon, color} = await getCategory(inputs.category, user.token);
         if (isEditing) {
+          console.log(inputs);
           updateTaskToBackend({
             userID: user.id,
             id: edittedTaskId,
