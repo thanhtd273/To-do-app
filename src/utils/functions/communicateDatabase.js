@@ -64,11 +64,10 @@ const getUserByEmail = async (email, token) => {
         },
       },
     );
-    const id = response.data[0].document.name.split('/').at(-1);
+    const id = response.data[0].document.name.split('/')[6];
     return {id, data: formatUserToUsable(response.data[0].document.fields)};
   } catch (error) {
-    console.log(error);
-    console.log('Error from getUserByEmail');
+    console.log('Error from getUserByEmail: ', error);
   }
 };
 const getCategories = async token => {
@@ -113,15 +112,22 @@ const getTasks = async (userID, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  const result = await Promise.all(
-    response.data.documents.map(async item => {
-      const id = item.name.split('/').at(-1);
-      const category = item.fields.category.stringValue;
-      const {icon, color} = await getCategory(category, token);
-      return {id, data: {...formatTaskToUsable(item.fields), icon, color}};
-    }),
-  );
-  return result;
+  try {
+    if (Object.keys(response.data).length) {
+      const result = await Promise.all(
+        response.data.documents.map(async item => {
+          const id = item.name.split('/')[8];
+          const category = item.fields.category.stringValue;
+          const {icon, color} = await getCategory(category, token);
+          return {id, data: {...formatTaskToUsable(item.fields), icon, color}};
+        }),
+      );
+
+      return result;
+    }
+  } catch (error) {
+    console.log('Error from here: ', error);
+  }
 };
 const getTasksByCategory = async (category, userID, token) => {
   try {
@@ -139,20 +145,23 @@ const getTasksByCategory = async (category, userID, token) => {
         },
       },
     );
-    const result = await Promise.all(
-      response.data.map(async item => {
-        const id = item.document.name.split('/').at(-1);
-        const {icon, color} = await getCategory(category, token);
-        return {
-          id,
-          data: {...formatTaskToUsable(item.document.fields), icon, color},
-        };
-      }),
-    );
-    return result;
+    if (Object.keys(response.data).length) {
+      const result = await Promise.all(
+        response.data.map(async item => {
+          const id = item.document.name.split('/')[6];
+          const {icon, color} = await getCategory(category, token);
+          return {
+            id,
+            data: {...formatTaskToUsable(item.document.fields), icon, color},
+          };
+        }),
+      );
+      return result;
+    }
   } catch (error) {
     console.log('error from getTasksByCategory');
   }
+  return [];
 };
 const updateTaskToBackend = ({userID, id, data, token}) => {
   axios
@@ -179,13 +188,14 @@ const createNewTaskToBackend = async ({userID, data, token}) => {
         },
       },
     );
-    const id = response.data.name.split('/').at(-1);
+    const id = response.data.name.split('/')[6];
     return id;
   } catch (error) {
     console.log('Error from createNewTaskToBackend');
   }
 };
 const deleteTaskToBackend = ({userID, id, token}) => {
+  console.log(userID, id);
   axios.delete(`${databaseURL}/users/${userID}/tasks/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,

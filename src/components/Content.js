@@ -1,23 +1,28 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {SectionList, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
-import TaskContentItem from './UI/TaskContentItem';
 import SubjectBar from './SubjectBar';
 import {
   getTasks,
   getTasksByCategory,
   getUserByEmail,
+  queryStructure,
 } from '../utils/functions/communicateDatabase';
 import {useDispatch, useSelector} from 'react-redux';
 import {setTasks} from '../reducers/task';
-import {formateDate, sortTasksByDayLeft} from '../utils/functions/date';
+import {sortTasksByDayLeft} from '../utils/functions/date';
 import {setUser} from '../reducers/user';
 import {
   NotificationListener,
   getFCMToken,
   requestUserPermission,
 } from '../services/notification/configueNotification';
+import {createPlainErrorLog, createErrorLog} from './error/ErrorLog';
+import LoadingOverlay from './error/LoadingOverlay';
+import {Alert} from 'react-native';
+import ListOfTasks from './ListOfTasks';
+
 const Content = () => {
   const navigation = useNavigation();
   const {tasks} = useSelector(state => state.tasks);
@@ -25,28 +30,55 @@ const Content = () => {
   const dispatch = useDispatch();
 
   const [category, setCategory] = useState('All');
+  const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState(0);
+
+  // useEffect(() => {
+  //   getFCMToken();
+  //   requestUserPermission();
+  //   NotificationListener();
+  // }, []);
 
   useEffect(() => {
-    getFCMToken();
-    requestUserPermission();
-    NotificationListener();
-  }, []);
-
-  useEffect(() => {
-    getUserByEmail(user.data.email, user.token)
-      .then(res => {
-        dispatch(setUser({token: user.token, id: res.id, data: res.data}));
-      })
-      .catch(err => console.log(err));
-
+    setLoading(true);
+    try {
+      if (user.data.email && user.token) {
+        getUserByEmail(user.data.email, user.token)
+          .then(res => {
+            dispatch(setUser({token: user.token, id: res.id, data: res.data}));
+          })
+          .catch(err => {
+            console.log('Error: 💥💥💥', err);
+            // createPlainErrorLog(
+            //   `Get user information failed! ${user.data.email} ${user.id}`,
+            //   "Wrong email or email doesn't exist in server",
+            // );
+            createPlainErrorLog(
+              `Get user information failed! ${user.data.email} ,
+              )}`,
+              `${err}`,
+            );
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
     setCategory('All');
   }, []);
   useEffect(() => {
-    if (user.id)
-      getTasks(user.id, user.token).then(res => dispatch(setTasks(res)));
+    try {
+      if (user.id)
+        getTasks(user.id, user.token)
+          .then(res => dispatch(setTasks(res)))
+          .catch(err => console.log(err));
+    } catch (error) {
+      console.log(error);
+    }
   }, [user.id]);
 
   const filterByCategory = async category => {
+    setLoading(true);
     try {
       if (category === 'All') {
         const res = await getTasks(user.id, user.token);
@@ -60,48 +92,37 @@ const Content = () => {
         dispatch(setTasks(response));
       }
     } catch (error) {
-      console.log('Error from querying all tasks');
-      console.log(error);
+      setCount(count + 1);
+      if (count <= 3) {
+        createErrorLog({
+          title: 'Cannot get the task!',
+          message: 'Try again!',
+          onAgree: () => {
+            filterByCategory(category);
+          },
+        });
+      } else {
+        createPlainErrorLog('Sorry!', 'Cannot get the task');
+      }
     }
+    setLoading(false);
   };
-  const renderTaskItem = ({item}) => {
-    return (
-      <TaskContentItem
-        task={item}
-        onPress={() => {
-          navigation.navigate('ManageTask', {
-            id: item.id,
-            data: item.data,
-          });
-        }}
-      />
-    );
-  };
-  const Title = ({date}) => {
-    return (
-      <View style={styles.dateContainer}>
-        <Text style={styles.date}>{formateDate(date)}</Text>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <SubjectBar
         isAll={true}
         focusedCategory={category}
         onPress={name => {
-          setCategory(name);
           filterByCategory(name);
+          setCategory(name);
         }}
         containerStyle={{top: 0, position: 'absolute'}}
       />
-      <SectionList
-        sections={sortTasksByDayLeft(tasks)}
-        renderItem={renderTaskItem}
-        renderSectionHeader={({section: {date}}) => <Title date={date} />}
-        style={{height: '80%'}}
-      />
+      {loading ? (
+        <LoadingOverlay message="Loading" />
+      ) : (
+        <ListOfTasks data={tasks && sortTasksByDayLeft(tasks)} />
+      )}
     </View>
   );
 };
@@ -112,13 +133,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 0.8,
     marginVertical: 8,
-  },
-  dateContainer: {
-    marginTop: 12,
-    marginLeft: 12,
-  },
-  date: {
-    color: '#3d3d6a',
-    fontSize: 20,
   },
 });

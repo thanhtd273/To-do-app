@@ -16,7 +16,7 @@ const Stack = createStackNavigator();
 
 const App = () => {
   useEffect(() => {
-    remindTask();
+    // remindTask();
     NotificationListener();
   }, []);
   return (

@@ -6,8 +6,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import Colors from '../utils/Colors';
 import AddButton from './AddButton';
 import IconButton from './UI/IconButton';
-import {pushNotification} from '../services/notification/pushNotification';
-import {removeUser} from '../reducers/user';
+import {removeUser, setUser} from '../reducers/user';
+import {setTasks} from '../reducers/task';
 
 const Footer = () => {
   const {user} = useSelector(state => state.user);
@@ -21,18 +21,10 @@ const Footer = () => {
   };
   const logout = () => {
     dispatch(removeUser());
+    dispatch(setTasks([]));
   };
   return (
     <View style={styles.container}>
-      <IconButton
-        icon="add"
-        size={72}
-        color="black"
-        style={{width: 50, height: 50, backgroundColor: Colors.bluePurple}}
-        onPress={() => {
-          pushNotification();
-        }}
-      />
       <AddButton onPress={handlePressAddButton} />
       <IconButton
         icon="logout"

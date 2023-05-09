@@ -5,6 +5,7 @@ import Colors from '../utils/Colors';
 import SubjectItem from './UI/SubjectItem';
 import {getCategories} from '../utils/functions/communicateDatabase';
 import {useSelector} from 'react-redux';
+import {createErrorLog} from './error/ErrorLog';
 
 const CATEGORIES = [
   {
@@ -42,12 +43,31 @@ const SubjectBar = ({
 }) => {
   const {user} = useSelector(state => state.user);
   const [categories, setCategories] = useState([]);
+  const [reRender, setReRender] = useState(false);
+  const [count, setCount] = useState(0);
+
+  if (reRender) {
+  }
+
   useEffect(() => {
-    getCategories(user.token).then(response => {
-      setCategories(response.reverse());
-    });
+    fetchCategory();
   }, []);
-  // console.log(focusedCategory);
+  const fetchCategory = async () => {
+    getCategories(user.token)
+      .then(response => {
+        setCategories(response.reverse());
+      })
+      .catch(err =>
+        createErrorLog({
+          title: 'Get categories failed!',
+          message: 'Try again',
+          onAgree: () => {
+            setCount(count + 1);
+            if (count <= 3) fetchCategory();
+          },
+        }),
+      );
+  };
   return (
     <ScrollView
       contentContainerStyle={[styles.container, containerStyle]}

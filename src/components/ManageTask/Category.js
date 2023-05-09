@@ -1,7 +1,5 @@
-import {Icon} from '@rneui/themed';
-import React, {useState} from 'react';
-import {View, StyleSheet, Text, Pressable, FlatList} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import React from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import Colors from '../../utils/Colors';
 
 import {SUBJECTS} from '../../utils/data';

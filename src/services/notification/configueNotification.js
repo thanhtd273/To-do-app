@@ -25,7 +25,7 @@ const getFCMToken = async () => {
       console.log(error, 'error in fcmtoken');
     }
   }
-  console.log(fcmtoken);
+
   return fcmtoken;
 };
 

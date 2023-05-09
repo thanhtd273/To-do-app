@@ -1,10 +1,12 @@
 import React from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import {View, TextInput, StyleSheet, Text} from 'react-native';
+import ErrorOverlay from '../error/ErrorOverlay';
 
-const TitleInput = ({textInputConfig}) => {
+const TitleInput = ({textInputConfig, errorMessage}) => {
   return (
     <View style={styles.inputContainer}>
       <TextInput {...textInputConfig} style={styles.input} multiline={false} />
+      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
     </View>
   );
 };
@@ -17,6 +19,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     borderBottomWidth: 1,
     borderBottomColor: Colors.textTheme,
+    // alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: -1,
   },
   input: {
     flex: 1,
@@ -25,5 +30,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 24,
     fontWeight: '500',
+    // borderWidth: 1,
+    // borderColor: 'red',
+  },
+  error: {
+    color: 'red',
   },
 });

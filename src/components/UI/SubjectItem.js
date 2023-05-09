@@ -1,17 +1,8 @@
 import React, {useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {Icon} from '@rneui/themed';
-import {useDispatch, useSelector} from 'react-redux';
-
-import {changeSubject} from '../redux/subject';
-import Colors from '../../utils/Colors';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const SubjectItem = ({subject, style, onPress}) => {
-  // const dispatch = useDispatch();
-  const handlePressSubjectButton = () => {
-    // dispatch(changeSubject({subject: subject}));
-  };
-
   return (
     <Pressable style={[styles.container, style]} onPress={onPress}>
       <View style={styles.subject}>

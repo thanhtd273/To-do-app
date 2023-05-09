@@ -16,7 +16,7 @@ const Header = () => {
           placeholderTextColor="#48497b"
         />
         <IconButton
-          icon="calendar-today"
+          icon="calendar"
           size={48}
           color="white"
           style={styles.pressedCalendar}

@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import {Calendar} from 'react-native-calendars';
-import Colors from '../utils/Colors';
-import IconButton from './UI/IconButton';
 
 const CustomizedCalendar = ({onPress}) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toDateString());

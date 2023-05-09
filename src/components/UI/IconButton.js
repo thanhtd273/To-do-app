@@ -1,8 +1,6 @@
-import {Icon} from '@rneui/themed';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React from 'react';
 import {Pressable, View, StyleSheet, Text} from 'react-native';
-import Colors from '../../utils/Colors';
-import SubjectItem from './SubjectItem';
 
 const IconButton = ({text, icon, size, color, style, onPress}) => {
   return (

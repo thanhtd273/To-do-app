@@ -1,7 +1,9 @@
-import {CheckBox, Icon} from '@rneui/themed';
+import {CheckBox} from '@rneui/themed';
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {updateTaskStatus} from '../../reducers/task';
 import {updateTaskToBackend} from '../../utils/functions/communicateDatabase';
 
@@ -78,9 +80,9 @@ const TaskContentItem = ({task, onPress}) => {
 
         <View style={styles.bottomPart}>
           <View style={styles.time}>
-            <Icon name="access-time" color={'#64668c'} />
+            <Icon name="clock-outline" color={'#64668c'} size={24} />
             <Text style={styles.timeText}>{formatTime}</Text>
-            <Icon name="alarm" color={'#64668c'} />
+            <Icon name="alarm" color={'#64668c'} size={24} />
           </View>
           <View style={styles.bottomLeftPart}>
             <Icon name={task.data.icon} color={task.data.color} size={24} />
